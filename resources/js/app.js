@@ -31,6 +31,7 @@ Vue.component('vote', require('./components/Vote.vue').default);
 Vue.component('answers', require('./components/Answers.vue').default);
 Vue.component('question', require('./components/Question.vue').default);
 Vue.component('search', require('./components/Search.vue').default);
+Vue.component('new-question', require('./components/NewQuestion.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

@@ -9,7 +9,7 @@ class Question extends Model
 {
     protected $fillable = ['title', 'body'];
 
-    protected $appends = ['created_Date', 'is_favourited', 'favourites_count','body_html'];
+    protected $appends = ['created_date', 'is_favourited', 'favourites_count','body_html'];
 
     public function user(){
         return $this->belongsTo(User::class);

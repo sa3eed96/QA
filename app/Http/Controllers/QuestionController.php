@@ -6,6 +6,7 @@ use App\Question;
 use App\Tag;
 use Illuminate\Http\Request;
 use App\Http\Requests\AskQuestionRequest;
+use Illuminate\Support\Facades\Auth;
 use function Rap2hpoutre\RemoveStopWords\remove_stop_words;
 
 class QuestionController extends Controller
@@ -60,9 +61,19 @@ class QuestionController extends Controller
      */
     public function store(AskQuestionRequest $request)
     {
-        $request->user()->questions()->create($request->only('title', 'body'));
-        
-        return redirect()->route('question.index')->with('success', "Your Question is Asked");
+        $question = $request->user()->questions()->create([
+            'title'=> $request->title,
+            'body' => $request->body
+        ]);
+        if($request->tags){
+            $tags = [];
+            foreach (explode(',',$request->tags) as $tag)
+                array_push($tags, new Tag(['tag' => $tag]));
+            $question->tags()->saveMany($tags);
+        }
+        return response()->json([
+            'slug' =>  $question->slug
+        ]);
     }
 
     /**
