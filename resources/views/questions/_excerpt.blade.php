@@ -28,6 +28,13 @@
                 @endcan
             </div>
         </div>
+        <div class="d-flex">
+            @foreach ($question->tags as $tag)
+                <div class="ml-1 rounded p-1 bg-info">
+                    {{$tag->tag}}
+                </div>
+            @endforeach
+        </div>
         <p class="lead">
             By <a href="{{$question->user->url}}">{{ $question->user->name }}</a>
             <small class="text-muted"> {{$question->created_date}} </small>

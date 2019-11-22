@@ -26,6 +26,11 @@
                                 <a class="btn btn-outline-secondary" href="/question">Back</a>
                             </div>
                         </div>
+                        <div class="d-flex">
+                                <div class="ml-1 rounded p-1 bg-info" v-for="tag in this.tags" v-bind:key="tag.id">
+                                    {{tag.tag}}
+                                </div>
+                        </div>
                     </div>
                     <hr>
 
@@ -58,6 +63,7 @@ export default {
         return{
             title: this.question.title,
             body: this.question.body,
+            tags: this.question.tags,
             bodyHtml: this.question.body_html,
             editing: false,
             id: this.question.id,

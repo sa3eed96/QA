@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Question;
+use App\Tag;
 use Illuminate\Http\Request;
 use App\Http\Requests\AskQuestionRequest;
+use function Rap2hpoutre\RemoveStopWords\remove_stop_words;
 
 class QuestionController extends Controller
 {
@@ -18,9 +20,24 @@ class QuestionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $questions = Question::with('user')->latest()->paginate(5);
+        $questions = Question::with('user');
+        if($request->query('tags')){
+            $words = explode(',', $request->query('tags'));
+            $tagsQuestionId = Tag::select('question_id');
+            foreach($words as $word){ 
+                $tagsQuestionId = $tagsQuestionId->orwhere('tag',$word);
+            }
+            $questions = $questions->wherein('id',$tagsQuestionId);
+        }
+        if($request->query('sentence')){
+            $words = explode(' ',preg_replace('/\s+/',' ',remove_stop_words($request->query('sentence'))));
+            foreach($words as $word){
+                $questions = $questions->orwhere('body','like','%'.$word.'%');
+            }
+        }
+        $questions = $questions->latest()->paginate(5);
         return view('questions.index',compact('questions'));
     }
 

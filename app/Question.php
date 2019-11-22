@@ -15,6 +15,10 @@ class Question extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function tags(){
+        return $this->hasMany(Tag::class);
+    }
+
     public function setTitleAttribute($value){
         $this->attributes['title'] = $value;
         $this->attributes['slug'] = str_slug($value);

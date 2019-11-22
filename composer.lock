@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fcb3d16839cb242b0bd6a948c8b2967a",
+    "content-hash": "3c6f8f3b14cdadaa2903667812d44569",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1594,6 +1594,45 @@
                 "uuid"
             ],
             "time": "2018-07-19T23:38:55+00:00"
+        },
+        {
+            "name": "rap2hpoutre/remove-stop-words",
+            "version": "v0.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rap2hpoutre/remove-stop-words.git",
+                "reference": "ee15088a50a8baccfef94db994a4d2851abf7ef4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rap2hpoutre/remove-stop-words/zipball/ee15088a50a8baccfef94db994a4d2851abf7ef4",
+                "reference": "ee15088a50a8baccfef94db994a4d2851abf7ef4",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.5 || ^7.0.2"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/remove_stop_words.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "rap2h",
+                    "email": "raphaelht@gmail.com"
+                }
+            ],
+            "description": "Remove stop words from a string",
+            "time": "2018-12-28T10:50:16+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
