@@ -16,7 +16,7 @@
                 </div>
             </div>
         </div>
-        <new-answer :question-id="question.id" @answerCreated="addAnswer"></new-answer>
+        <new-answer v-if="signedIn" :question-id="question.id" @answerCreated="addAnswer"></new-answer>
     </div>
 </template>
 

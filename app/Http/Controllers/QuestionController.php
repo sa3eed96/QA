@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Question;
 use App\Tag;
+use App\Image;
 use Illuminate\Http\Request;
 use App\Http\Requests\AskQuestionRequest;
 use Illuminate\Support\Facades\Auth;
@@ -62,14 +63,24 @@ class QuestionController extends Controller
     public function store(AskQuestionRequest $request)
     {
         $question = $request->user()->questions()->create([
-            'title'=> $request->title,
-            'body' => $request->body
+            'title'=> $request->input('title'),
+            'body' => $request->input('body')
         ]);
-        if($request->tags){
+        if($request->input('tags')){
             $tags = [];
-            foreach (explode(',',$request->tags) as $tag)
+            foreach (explode(',',$request->input('tags')) as $tag)
                 array_push($tags, new Tag(['tag' => $tag]));
             $question->tags()->saveMany($tags);
+        }
+        if($request->hasFile('0')){
+            $i=0;
+            $images = [];
+            while($request->hasFile(''.$i)){
+                $file = $request->file(''.$i);
+                array_push($images, new Image(['image'=> $file->openFile()->fread($file->getSize())]));
+                ++$i;
+            }
+            $question->images()->saveMany($images);
         }
         return response()->json([
             'slug' =>  $question->slug

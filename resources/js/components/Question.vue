@@ -41,6 +41,9 @@
                         </div>
                         <div class="media-body">
                             <div v-html="bodyHtml"></div>
+                            <div class="text-center mb-4">
+                                <img v-for="(img,index) in images" v-bind:key="index" :src="img" class="img-fluid mb-4">
+                            </div>
                             <div class="ml-auto">
                                 <a v-if="authorize('modify', question)" @click.prevent="editing=true" class="btn btn-sm btn-outline-info">Edit</a>
                                 <button v-if="authorize('modify', question)" @click="destroy" class="btn btn-outline-danger btn-sm">Delete</button>
@@ -67,8 +70,16 @@ export default {
             bodyHtml: this.question.body_html,
             editing: false,
             id: this.question.id,
-            beforeEdit: {}
+            beforeEdit: {},
+            images: []
         };
+    },
+    created(){
+        axios.get(`/question/${this.question.id}/images`).then(({data}) => {
+            data.images.forEach(img =>{
+                this.images.push(`data:image\jpeg;base64, ${img}`);
+            })
+        });
     },
     methods:{
         edit(){

@@ -18,6 +18,10 @@ class Answer extends Model
         return $this->belongsTo(Question::class);
     }
 
+    public function images(){
+        return $this->morphMany('App\Image', 'imagable');
+    }
+
     public function getBodyHtmlAttribute(){
         return \Parsedown::instance()->text($this->body);
     }

@@ -72,6 +72,10 @@ class Question extends Model
         return $this->morphToMany(User::class,'votable');
     }
 
+    public function images(){
+        return $this->morphMany('App\Image', 'imagable');
+    }
+
     public function getExcerptAttribute(){
         return str_limit(strip_tags($this->bodyhtml()), 250);
     }
