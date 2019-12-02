@@ -6,6 +6,7 @@ use App\Answer;
 use App\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Image;
 
 class AnswerController extends Controller
 {
@@ -26,10 +27,17 @@ class AnswerController extends Controller
      */
     public function store(Question $question, Request $request)
     {
-        $request->validate([
-            'body' => 'required'
-        ]);
-        $answer = $question->answers()->create(['body' => $request->body, 'user_id' => Auth::id()]);
+        $answer = $question->answers()->create(['body' => $request->input('body'), 'user_id' => Auth::id()]);
+        if($request->hasFile('0')){
+            $i=0;
+            $images = [];
+            while($request->hasFile(''.$i)){
+                $file = $request->file(''.$i);
+                array_push($images, new Image(['image'=> $file->openFile()->fread($file->getSize())]));
+                ++$i;
+            }
+            $answer->images()->saveMany($images);
+        }
         return response()->json([
             'message' => 'Answer Created',
             'answer' => $answer->load('user')

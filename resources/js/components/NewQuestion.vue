@@ -52,7 +52,6 @@ export default {
                     formData.append(`${i}`, this.images[i]);
                 }
             }
-            console.log(formData.get('title'));
             axios.post(`/question`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -62,10 +61,11 @@ export default {
             });
         },
         addTags(){
-            const tag = this.tagsInput.toLowerCase();
-            if(this.tags.indexOf(tag) === -1){
-                this.tags.push(tag);
-            }
+            const tags = this.tagsInput.toLowerCase().split(' ');
+            tags.forEach(tag => {
+                if(this.tags.indexOf(tag) === -1 && !tag.match(/[!_()\[\]\/\\\|^$\*\.@#]/) && tag.length > 1)
+                    this.tags.push(tag);
+            });
             this.tagsInput = '';
         },
         addImages(images){

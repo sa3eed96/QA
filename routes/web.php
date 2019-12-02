@@ -15,7 +15,6 @@
 Auth::routes();
 
 Route::get('/',  'HomeController@index')->name('home');
-
 Route::resource('question','QuestionController')->except('show');
 Route::get('/question/{slug}','QuestionController@show')->name('question.show');
 Route::resource('question.answer','AnswerController')->only(['index','store','edit','update','destroy']);
@@ -24,4 +23,7 @@ Route::post('questions/{question}/favourites','FavouritesController@store')->nam
 Route::delete('questions/{question}/favourites','FavouritesController@destroy')->name('question.unfavourite');
 Route::post('questions/{question}/vote','VoteQuestionController');
 Route::post('answers/{answer}/vote','VoteAnswerController');
-Route::get('question/{question}/images','imageQuestionController');
+Route::resource('question.images','ImageQuestionController')->only(['index','destroy']);
+Route::resource('answer.images','ImageAnswerController')->only(['index','destroy']);
+Route::get('tags','TagController@index');
+Route::delete('tags/{question}','TagController@delete');

@@ -14,6 +14,9 @@
             </form>
             <div v-else>
                 <div v-html="bodyHtml"></div>
+                <div class="text-center mb-4">
+                    <img v-for="(img,index) in images" v-bind:key="index" :src="img" class="img-fluid mb-4">
+                </div>
                 <div class="row">
                     <div class="col-4">
                         <div class="ml-auto">
@@ -42,8 +45,16 @@ export default {
             body: this.answer.body,
             bodyHtml: this.answer.body_html,
             id: this.answer.id,
-            questionId: this.answer.question_id
+            questionId: this.answer.question_id,
+            images: []
         };
+    },
+    created(){
+        axios.get(`/answer/${this.answer.id}/images`).then(({data}) => {
+            data.images.forEach(img =>{
+                this.images.push(`data:image\jpeg;base64, ${img}`);
+            })
+        });
     },
     methods: {
         update(){

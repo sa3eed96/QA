@@ -20,39 +20,44 @@
 export default {
     data(){
   	return {
-    	status: '',
+    	status:'',
         error: false,
         files: [],
         urls: []
     };
   },
     methods:{
-        handleImages(){
-            this.error=false;
-            let removed = '';
-            for (let i = 0, numFiles = this.$refs.images.files.length; i < numFiles; ++i) {
-                if(this.$refs.images.files[i].size/1024 > 1024 ){
-                    this.error = true;
-                    removed += ', '+this.$refs.images.files[i].name;
-                }
-                else{
-                    this.files.push(this.$refs.images.files[i]);
-                    this.urls.push(URL.createObjectURL(this.$refs.images.files[i]));
-                }
-        }
-        this.$emit('imagesAdded', this.files);
-        if(this.error){
-            this.status=`error uploading ${removed}, size must not exceed 1 MB`;
-        }
-        },
         removeImage(index){
             this.urls.splice(index,1);
             this.files.splice(index,1);
         },
         openSelector(){
             this.$refs.images.click();
+        },
+        invalid(file){
+            const mime = file.type;
+            const kbSize = file.size/1024; 
+            return (kbSize > 1024) || (mime != "image/jpeg" && mime != "image/png");
+        },
+        handleImages(){
+            this.error=false;
+            let removed = '';
+            for (let i = 0, numFiles = this.$refs.images.files.length; i < numFiles; ++i) {
+                if(this.invalid(this.$refs.images.files[i])){
+                    this.error = true;
+                    removed +=' '+this.$refs.images.files[i].name;
+                }
+                else{
+                    this.files.push(this.$refs.images.files[i]);
+                    this.urls.push(URL.createObjectURL(this.$refs.images.files[i]));
+                }
+            }
+            this.$emit('imagesAdded', this.files);
+            if(this.error){
+                this.status = `error uploading ${removed}, size must not exceed 1 MB and only jpeg nd png allowed \n`;
+            }
         }
-  }
+    }
 }
 </script>
 

@@ -9,12 +9,12 @@
                     <hr>
 
                     <div class="media">
-                         <div class="media-body">
+                        <div class="media-body">
                             <div class="form-group">
-                            <textarea v-model="body" class="form-control" rows="10" required></textarea>
-                        </div>
-                        <button class="btn btn-primary" @click="editing=false">Update</button>
-                        <button class="btn btn-outline-secondary" type="button" @click="editing=false">Cancel</button>
+                                <textarea v-model="body" class="form-control" rows="10" required></textarea>
+                            </div>
+                            <button class="btn btn-primary" type="submit">Update</button>
+                            <button class="btn btn-outline-secondary" type="button" @click="editing=false">Cancel</button>
                         </div>
                     </div>
                 </form>
@@ -94,6 +94,7 @@ export default {
             this.editing = false;
         },
         update(){
+            this.editing=false;
             axios.put(`/question/${this.id}`,{
                 title: this.title,
                 body: this.body
