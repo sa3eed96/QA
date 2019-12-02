@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="d-flex mb-2">
-            <div v-for="tag in this.tags" v-bind:key="tag" class="ml-1 rounded p-1 bg-info">
+            <div v-for="(tag, index) in this.tags" v-bind:key="index" id="tag" class="ml-1 rounded p-1 bg-info" title="remove" @click="removeTag(index)">
                     {{tag}}
             </div>
         </div>
@@ -70,8 +70,17 @@ export default {
         },
         addImages(images){
             this.images = images;
+        },
+        removeTag(index){
+            this.tags.splice(index,1);
         }
     },
     components: { UploadImage }
 }
 </script>
+
+<style scoped>
+    #tag{
+        cursor: pointer;
+    }
+</style>

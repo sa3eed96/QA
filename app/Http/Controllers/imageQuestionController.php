@@ -16,10 +16,10 @@ class ImageQuestionController extends Controller
      */
     public function index(Question $question)
     {
-        $binaryImages = $question->images()->select('image')->get();
+        $binaryImages = $question->images()->select('id','image')->get();
         $base64Images = [];
         foreach ($binaryImages as $image) {
-            array_push($base64Images,base64_encode($image->image));  
+            array_push($base64Images,['id'=> $image->id,'image' => base64_encode($image->image)]);  
         }
         //return response('<img src="data:image/jpeg;base64,'.base64_encode($k[0]->image).'">');
         return response()->json([

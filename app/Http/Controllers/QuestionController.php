@@ -120,9 +120,20 @@ class QuestionController extends Controller
     public function update(AskQuestionRequest $request, Question $question)
     {
         $question->update($request->only('title', 'body'));
+        if($request->removedTags)
+            $question->tags()->wherein('id',$request->removedTags)->delete();
+        if($request->removedImages)
+            $question->images()->wherein('id',$request->removedImages)->delete();
+        if($request->newTags){
+            $tags = [];
+            foreach ($request->newTags as $tag)
+                array_push($tags, new Tag(['tag' => $tag]));
+            $question->tags()->saveMany($tags);
+        }
         return response()->json([
             'message' => 'Question Edited',
-            'body_html' => $question->body_html
+            'body_html' => $question->body_html,
+            'tags' => $question->tags()->get()
         ]);
     }
 

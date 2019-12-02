@@ -71,6 +71,8 @@ class AnswerController extends Controller
         $answer->update($request->validate([
             'body' => 'required'
         ]));
+        if($request->removedImages)
+            $answer->images()->wherein('id',$request->removedImages)->delete();
         return response()->json([
             'message' => 'Your answer is updated',
             'body_html' => $answer->body_html
