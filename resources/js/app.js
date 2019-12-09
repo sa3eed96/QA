@@ -11,6 +11,7 @@ import VueIziToast from 'vue-izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import Authorization from './authorization/authorize';
 
+Vue.use(require('vue-moment'));
 Vue.use(VueIziToast);
 Vue.use(Authorization);
 /**
@@ -33,6 +34,7 @@ Vue.component('question', require('./components/Question.vue').default);
 Vue.component('search', require('./components/Search.vue').default);
 Vue.component('new-question', require('./components/NewQuestion.vue').default);
 Vue.component('home-component', require('./components/HomeComponent.vue').default);
+Vue.component('notifications', require('./components/Notifications.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

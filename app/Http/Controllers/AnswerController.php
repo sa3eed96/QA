@@ -7,6 +7,7 @@ use App\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Image;
+use App\Events\ReplyEvent;
 
 class AnswerController extends Controller
 {
@@ -38,6 +39,7 @@ class AnswerController extends Controller
             }
             $answer->images()->saveMany($images);
         }
+        broadcast(new ReplyEvent($question));
         return response()->json([
             'message' => 'Answer Created',
             'answer' => $answer->load('user')

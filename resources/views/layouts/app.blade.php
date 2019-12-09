@@ -18,9 +18,15 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     
-    @yield('heads')
+    <script src="https://kit.fontawesome.com/d8e65388c0.js" crossorigin="anonymous"></script>
 </head>
 <body>
+    <script>
+        window.Auth = {!! json_encode([
+            'signedIn' => Auth::check(),
+            'user' => Auth::user()
+        ]) !!}
+    </script>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -51,6 +57,9 @@
                                 @endif
                         @else
                         <li class="nav-item dropdown">
+                            <notifications></notifications>
+                        </li>
+                        <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
@@ -72,17 +81,10 @@
                     </div>
                 </div>
             </nav>
-            
             <main class="py-4">
                 @yield('content')
             </main>
         </div>
-        <script>
-            window.Auth = {!! json_encode([
-                'signedIn' => Auth::check(),
-                'user' => Auth::user()
-            ]) !!}
-        </script>
         <script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>

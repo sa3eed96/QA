@@ -27,3 +27,7 @@ Route::resource('question.images','ImageQuestionController')->only(['index','des
 Route::resource('answer.images','ImageAnswerController')->only(['index','destroy']);
 Route::get('tags','TagController@index');
 Route::delete('tags/{question}','TagController@delete');
+Route::resource('notifications','NotificationController')->only(['index']);
+Route::patch('/notifications','NotificationController@update')->name('notifications.update');
+
+
