@@ -54,8 +54,8 @@
       <div class="card mb-4">
         <div class="card-header">{{user.name}}'s Questions</div>
         <div class="card-body">
-          <div v-if="questions.length > 0">
-            <div class="media post" v-for="question in questions" v-bind:key="question.id">
+          <div v-if="questions.data.length > 0">
+            <div class="media post" v-for="question in questions.data" v-bind:key="question.id">
               <div class="d-flex felx-column counters">
                 <div class="vote">
                   <strong>{{question.votes_count}}</strong>
@@ -79,6 +79,13 @@
                 {{ question.excerpt }}
               </div>
             </div>
+            <div class="d-flex mt-4 justify-content-center">
+              <button @click="fetch(questions.prev_page_url,'questions')" :class="questions.prev_page_url !== null ? '':'disabled'" class="btn btn-secondary btn-sm"> &lt; </button>
+              <div class="text-dark mx-2 font-weight-bold">
+                {{questions.current_page}}
+              </div>
+              <button @click="fetch(questions.next_page_url,'questions')" :class="questions.next_page_url !== null ? '': 'disabled'" class="btn btn-secondary btn-sm">&gt;</button>
+            </div>
           </div>
           <div v-else>
             There is no questions to show
@@ -88,12 +95,19 @@
       <div class="card">
         <div class="card-header">{{user.name}}'s Answers</div>
         <div class="card-body">
-          <div v-if="answers.length > 0">
-            <div class="post" v-for="answer in answers" v-bind:key="answer.id">
+          <div v-if="answers.data.length > 0">
+            <div class="post" v-for="answer in answers.data" v-bind:key="answer.id">
               <h3 class="mt-0">
                     <a :href="getQuestionUrl(answer.question_slug)">{{ answer.question_title }}</a>
               </h3>
               <div v-html="answer.body_html"></div>
+            </div>
+            <div class="d-flex mt-4 justify-content-center">
+              <button @click="fetch(answers.prev_page_url,'answers')" :class="answers.prev_page_url !== null ? '':'disabled'" class="btn btn-secondary btn-sm"> &lt; </button>
+              <div class="text-dark mx-2 font-weight-bold">
+                {{answers.current_page}}
+              </div>
+              <button @click="fetch(answers.next_page_url,'answers')" :class="answers.next_page_url !== null ? '': 'disabled'" class="btn btn-secondary btn-sm">&gt;</button>
             </div>
           </div>
           <div v-else>
@@ -108,17 +122,27 @@
 
 <script>
 export default {
-  props: ["user", 'questions', 'answers'],
+  props: ["user"],
   data(){
     return {
       editing: false,
       name: this.user.name,
-      questionsNextUrl: this.questions.next_page_url,
       age: this.user.age,
       country: this.user.country,
       beforeEdit: {},
-      errors: {}
+      errors: {},
+      questions: {},
+      answers: {}
     };
+  },
+  created(){
+    axios.get(`/user/${this.user.id}/questions`).then(({data})=>{
+      this.questions = data.questions;
+    });
+
+    axios.get(`/user/${this.user.id}/answers`).then(({data})=>{
+      this.answers = data.answers;
+    });
   },
   methods: {
     getQuestionUrl(slug){
@@ -158,6 +182,14 @@ export default {
         axios.delete(`/user/${this.user.id}`).then(res=>{
           window.location.href = "/";
         });
+    },
+    fetch(url, model){
+      axios.get(url).then(({data})=>{
+        if(model === 'questions')
+          this.questions = data.questions;
+        else
+          this.answers = data.answers;
+      });
     }
   },
 };

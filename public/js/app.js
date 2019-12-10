@@ -2649,45 +2649,72 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["user", 'questions', 'answers'],
+  props: ["user"],
   data: function data() {
     return {
       editing: false,
       name: this.user.name,
-      questionsNextUrl: this.questions.next_page_url,
       age: this.user.age,
       country: this.user.country,
       beforeEdit: {},
-      errors: {}
+      errors: {},
+      questions: {},
+      answers: {}
     };
+  },
+  created: function created() {
+    var _this = this;
+
+    axios.get("/user/".concat(this.user.id, "/questions")).then(function (_ref) {
+      var data = _ref.data;
+      _this.questions = data.questions;
+    });
+    axios.get("/user/".concat(this.user.id, "/answers")).then(function (_ref2) {
+      var data = _ref2.data;
+      _this.answers = data.answers;
+    });
   },
   methods: {
     getQuestionUrl: function getQuestionUrl(slug) {
       return "/question/".concat(slug);
     },
     update: function update() {
-      var _this = this;
+      var _this2 = this;
 
       axios.put("/user/".concat(this.user.id), {
         name: this.name,
         age: this.age,
         country: this.country
-      }).then(function (_ref) {
-        var data = _ref.data;
-        _this.editing = false;
+      }).then(function (_ref3) {
+        var data = _ref3.data;
+        _this2.editing = false;
 
-        _this.$toast.success('Info Updated', 'Success', {
+        _this2.$toast.success('Info Updated', 'Success', {
           timeout: 3000
         });
 
-        _this.errors = {};
+        _this2.errors = {};
       })["catch"](function (err) {
-        _this.$toast.error(err.response.data.message, 'Error', {
+        _this2.$toast.error(err.response.data.message, 'Error', {
           timeout: 3000
         });
 
-        _this.errors = err.response.data.errors;
+        _this2.errors = err.response.data.errors;
       });
     },
     edit: function edit() {
@@ -2708,6 +2735,14 @@ __webpack_require__.r(__webpack_exports__);
     deleteAccount: function deleteAccount() {
       if (confirm('Are you sure you want to delete your account?')) axios["delete"]("/user/".concat(this.user.id)).then(function (res) {
         window.location.href = "/";
+      });
+    },
+    fetch: function fetch(url, model) {
+      var _this3 = this;
+
+      axios.get(url).then(function (_ref4) {
+        var data = _ref4.data;
+        if (model === 'questions') _this3.questions = data.questions;else _this3.answers = data.answers;
       });
     }
   }
@@ -41699,80 +41734,143 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "card-body" }, [
-            _vm.questions.length > 0
+            _vm.questions.data.length > 0
               ? _c(
                   "div",
-                  _vm._l(_vm.questions, function(question) {
-                    return _c(
-                      "div",
-                      { key: question.id, staticClass: "media post" },
-                      [
-                        _c(
-                          "div",
-                          { staticClass: "d-flex felx-column counters" },
-                          [
-                            _c("div", { staticClass: "vote" }, [
-                              _c("strong", [
-                                _vm._v(_vm._s(question.votes_count))
-                              ]),
-                              _vm._v(
-                                "\r\n                  votes\r\n                "
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              { staticClass: "status", class: question.status },
-                              [
-                                _c("strong", [
-                                  _vm._v(_vm._s(question.answers_count))
-                                ]),
-                                _vm._v(
-                                  "\r\n                  answers\r\n                "
-                                )
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "view" }, [
-                              _vm._v(_vm._s(question.views) + "views")
-                            ])
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "media-body" }, [
+                  [
+                    _vm._l(_vm.questions.data, function(question) {
+                      return _c(
+                        "div",
+                        { key: question.id, staticClass: "media post" },
+                        [
                           _c(
                             "div",
-                            { staticClass: "d-flex align-items-center" },
+                            { staticClass: "d-flex felx-column counters" },
                             [
-                              _c("h3", { staticClass: "mt-0" }, [
-                                _c(
-                                  "a",
-                                  {
-                                    attrs: {
-                                      href: _vm.getQuestionUrl(question.slug)
-                                    }
-                                  },
-                                  [_vm._v(_vm._s(question.title))]
+                              _c("div", { staticClass: "vote" }, [
+                                _c("strong", [
+                                  _vm._v(_vm._s(question.votes_count))
+                                ]),
+                                _vm._v(
+                                  "\r\n                  votes\r\n                "
                                 )
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "status",
+                                  class: question.status
+                                },
+                                [
+                                  _c("strong", [
+                                    _vm._v(_vm._s(question.answers_count))
+                                  ]),
+                                  _vm._v(
+                                    "\r\n                  answers\r\n                "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "view" }, [
+                                _vm._v(_vm._s(question.views) + "views")
                               ])
                             ]
                           ),
                           _vm._v(" "),
-                          _c("p", { staticClass: "lead" }, [
-                            _c("small", { staticClass: "text-muted" }, [
-                              _vm._v(_vm._s(question.created_date))
-                            ])
-                          ]),
-                          _vm._v(
-                            "\r\n                " +
-                              _vm._s(question.excerpt) +
-                              "\r\n              "
-                          )
-                        ])
+                          _c("div", { staticClass: "media-body" }, [
+                            _c(
+                              "div",
+                              { staticClass: "d-flex align-items-center" },
+                              [
+                                _c("h3", { staticClass: "mt-0" }, [
+                                  _c(
+                                    "a",
+                                    {
+                                      attrs: {
+                                        href: _vm.getQuestionUrl(question.slug)
+                                      }
+                                    },
+                                    [_vm._v(_vm._s(question.title))]
+                                  )
+                                ])
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("p", { staticClass: "lead" }, [
+                              _c("small", { staticClass: "text-muted" }, [
+                                _vm._v(_vm._s(question.created_date))
+                              ])
+                            ]),
+                            _vm._v(
+                              "\r\n                " +
+                                _vm._s(question.excerpt) +
+                                "\r\n              "
+                            )
+                          ])
+                        ]
+                      )
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "d-flex mt-4 justify-content-center" },
+                      [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-secondary btn-sm",
+                            class:
+                              _vm.questions.prev_page_url !== null
+                                ? ""
+                                : "disabled",
+                            on: {
+                              click: function($event) {
+                                return _vm.fetch(
+                                  _vm.questions.prev_page_url,
+                                  "questions"
+                                )
+                              }
+                            }
+                          },
+                          [_vm._v(" < ")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "text-dark mx-2 font-weight-bold" },
+                          [
+                            _vm._v(
+                              "\r\n                " +
+                                _vm._s(_vm.questions.current_page) +
+                                "\r\n              "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-secondary btn-sm",
+                            class:
+                              _vm.questions.next_page_url !== null
+                                ? ""
+                                : "disabled",
+                            on: {
+                              click: function($event) {
+                                return _vm.fetch(
+                                  _vm.questions.next_page_url,
+                                  "questions"
+                                )
+                              }
+                            }
+                          },
+                          [_vm._v(">")]
+                        )
                       ]
                     )
-                  }),
-                  0
+                  ],
+                  2
                 )
               : _c("div", [
                   _vm._v(
@@ -41788,29 +41886,93 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "card-body" }, [
-            _vm.answers.length > 0
+            _vm.answers.data.length > 0
               ? _c(
                   "div",
-                  _vm._l(_vm.answers, function(answer) {
-                    return _c("div", { key: answer.id, staticClass: "post" }, [
-                      _c("h3", { staticClass: "mt-0" }, [
+                  [
+                    _vm._l(_vm.answers.data, function(answer) {
+                      return _c(
+                        "div",
+                        { key: answer.id, staticClass: "post" },
+                        [
+                          _c("h3", { staticClass: "mt-0" }, [
+                            _c(
+                              "a",
+                              {
+                                attrs: {
+                                  href: _vm.getQuestionUrl(answer.question_slug)
+                                }
+                              },
+                              [_vm._v(_vm._s(answer.question_title))]
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", {
+                            domProps: { innerHTML: _vm._s(answer.body_html) }
+                          })
+                        ]
+                      )
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "d-flex mt-4 justify-content-center" },
+                      [
                         _c(
-                          "a",
+                          "button",
                           {
-                            attrs: {
-                              href: _vm.getQuestionUrl(answer.question_slug)
+                            staticClass: "btn btn-secondary btn-sm",
+                            class:
+                              _vm.answers.prev_page_url !== null
+                                ? ""
+                                : "disabled",
+                            on: {
+                              click: function($event) {
+                                return _vm.fetch(
+                                  _vm.answers.prev_page_url,
+                                  "answers"
+                                )
+                              }
                             }
                           },
-                          [_vm._v(_vm._s(answer.question_title))]
+                          [_vm._v(" < ")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "text-dark mx-2 font-weight-bold" },
+                          [
+                            _vm._v(
+                              "\r\n                " +
+                                _vm._s(_vm.answers.current_page) +
+                                "\r\n              "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-secondary btn-sm",
+                            class:
+                              _vm.answers.next_page_url !== null
+                                ? ""
+                                : "disabled",
+                            on: {
+                              click: function($event) {
+                                return _vm.fetch(
+                                  _vm.answers.next_page_url,
+                                  "answers"
+                                )
+                              }
+                            }
+                          },
+                          [_vm._v(">")]
                         )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", {
-                        domProps: { innerHTML: _vm._s(answer.body_html) }
-                      })
-                    ])
-                  }),
-                  0
+                      ]
+                    )
+                  ],
+                  2
                 )
               : _c("div", [
                   _vm._v(

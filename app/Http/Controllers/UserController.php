@@ -22,15 +22,9 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $questions = $user->questions()->get();
-        $answers = $user->answers()
-            ->join('questions','questions.id','=','answers.question_id')
-            ->select('answers.*','questions.title as question_title','questions.slug as question_slug')
-            ->get();
+        // $questions = $user->questions()->simplePaginate(1)->toJson();
         return view('profile',[
-            'user' => $user,
-            'questions' => $questions,
-            'answers' => $answers
+            'user' => $user
         ]);
     }
 

@@ -20,6 +20,8 @@ Route::get('/question/{slug}','QuestionController@show')->name('question.show');
 Route::resource('question.answer','AnswerController')->only(['index','store','edit','update','destroy']);
 Route::post('answers/{answer}/accept','AcceptAnswerController')->name('answer.accept');
 Route::get('/user/{user}/favourites','FavouritesController@index')->name('user.favourite');
+Route::resource('/user/{user}/answers','UserAnswersController')->only(['index']);
+Route::resource('/user/{user}/questions','UserQuestionsController')->only(['index']);
 Route::post('questions/{question}/favourites','FavouritesController@store')->name('question.favourite');
 Route::delete('questions/{question}/favourites','FavouritesController@destroy')->name('question.unfavourite');
 Route::post('questions/{question}/vote','VoteQuestionController');
