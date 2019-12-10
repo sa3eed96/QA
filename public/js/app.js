@@ -41823,7 +41823,7 @@ var render = function() {
                         _c(
                           "button",
                           {
-                            staticClass: "btn btn-secondary btn-sm",
+                            staticClass: "mr-1 btn btn-secondary btn-sm",
                             class:
                               _vm.questions.current_page !== 1
                                 ? ""
@@ -41897,7 +41897,7 @@ var render = function() {
                         _c(
                           "button",
                           {
-                            staticClass: "btn btn-secondary btn-sm",
+                            staticClass: "ml-1 btn btn-secondary btn-sm",
                             class:
                               _vm.questions.last_page_url !==
                               _vm.questions.last_page
@@ -41968,7 +41968,7 @@ var render = function() {
                         _c(
                           "button",
                           {
-                            staticClass: "btn btn-secondary btn-sm",
+                            staticClass: "mr-1 btn btn-secondary btn-sm",
                             class:
                               _vm.answers.current_page !== 1 ? "" : "disabled",
                             on: {
@@ -42040,7 +42040,7 @@ var render = function() {
                         _c(
                           "button",
                           {
-                            staticClass: "btn btn-secondary btn-sm",
+                            staticClass: "ml-1 btn btn-secondary btn-sm",
                             class:
                               _vm.answers.last_page_url !==
                               _vm.answers.last_page

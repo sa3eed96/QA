@@ -15,7 +15,7 @@ class UserQuestionsController extends Controller
      */
     public function index(User $user)
     {
-        $questions = $user->questions()->paginate(1);
+        $questions = $user->questions()->paginate(3);
         return response()->json([
             'questions' => $questions
         ]);

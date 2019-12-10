@@ -19,7 +19,7 @@ class UserAnswersController extends Controller
         $answers = $user->answers()
             ->join('questions','questions.id','=','answers.question_id')
             ->select('answers.*','questions.title as question_title','questions.slug as question_slug')
-            ->paginate(1);
+            ->paginate(3);
         return response()->json([
             'answers' => $answers
         ]);
