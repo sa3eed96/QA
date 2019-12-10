@@ -12,8 +12,8 @@ class TagController extends Controller
 
     public function index()
     {
-        return response()->json([
-            'tags'=> Tag::select(DB::raw('tag, count(*) as count'))->groupBy('tag')->orderBy('count','Desc')->limit(15)->get()
+        return view('tags',[
+            'tags'=> Tag::select(DB::raw('tag, count(*) as count'))->groupBy('tag')->orderBy('count','Desc')->simplePaginate(50)
         ]);
     }
 
