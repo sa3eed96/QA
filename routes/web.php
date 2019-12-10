@@ -26,8 +26,9 @@ Route::post('answers/{answer}/vote','VoteAnswerController');
 Route::resource('question.images','ImageQuestionController')->only(['index','destroy']);
 Route::resource('answer.images','ImageAnswerController')->only(['index','destroy']);
 Route::get('tags','TagController@index');
-Route::delete('tags/{question}','TagController@delete');
 Route::resource('notifications','NotificationController')->only(['index']);
 Route::patch('/notifications','NotificationController@update')->name('notifications.update');
+Route::resource('user','UserController')->only(['show','update','destroy']);
+
 
 

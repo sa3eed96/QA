@@ -146,8 +146,10 @@ class QuestionController extends Controller
     public function destroy(Question $question)
     {
         $question->delete();
-        return response()->json([
-            'message' => 'Question Deleted'
-        ]);
+        if($request->expectsJson())
+            return response()->json([
+                'message' => 'Question Deleted'
+            ]);
+        return redirect('question'); 
     }
 }

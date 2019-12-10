@@ -35,6 +35,7 @@ Vue.component('search', require('./components/Search.vue').default);
 Vue.component('new-question', require('./components/NewQuestion.vue').default);
 Vue.component('home-component', require('./components/HomeComponent.vue').default);
 Vue.component('notifications', require('./components/Notifications.vue').default);
+Vue.component('profile', require('./components/ProfileComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
