@@ -13,7 +13,7 @@ class TagController extends Controller
     public function index()
     {
         return view('tags',[
-            'tags'=> Tag::select(DB::raw('tag, count(*) as count'))->groupBy('tag')->orderBy('count','Desc')->simplePaginate(50)
+            'tags'=> Tag::select(DB::raw('tag, count(*) as count'))->groupBy('tag')->orderBy('count','Desc')->paginate(50)
         ]);
     }
 
