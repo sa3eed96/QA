@@ -2070,6 +2070,21 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2079,7 +2094,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       questionId: this.question.id,
       count: this.question.answers_count,
       answers: [],
-      nextUrl: null
+      userAnswers: [],
+      nextUrl: null,
+      temp: []
     };
   },
   created: function created() {
@@ -2090,12 +2107,24 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var _this = this;
 
       axios.get(uri).then(function (_ref) {
-        var _this$answers;
+        var _this$temp;
 
         var data = _ref.data;
 
-        (_this$answers = _this.answers).push.apply(_this$answers, _toConsumableArray(data.data));
+        (_this$temp = _this.temp).push.apply(_this$temp, _toConsumableArray(data.data));
 
+        var best;
+        var userAns = [];
+
+        _toConsumableArray(data.data).forEach(function (ans) {
+          if (_this.question.best_answer_id === ans.id) {
+            best = ans;
+          } else if (window.Auth.signedIn && ans.user_id === window.Auth.user.id) {
+            _this.userAnswers.push(ans);
+          } else _this.answers.push(ans);
+        });
+
+        if (best) _this.answers.unshift(best);
         _this.nextUrl = data.next_page_url;
       });
     },
@@ -2103,8 +2132,12 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       this.answers.splice(index, 1);
       this.count--;
     },
+    removeUserAnswer: function removeUserAnswer(index) {
+      this.userAnswers.splice(index, 1);
+      this.count--;
+    },
     addAnswer: function addAnswer(answer) {
-      this.answers.push(answer);
+      this.userAnswers.push(answer);
       this.count++;
     }
   },
@@ -2498,7 +2531,7 @@ __webpack_require__.r(__webpack_exports__);
     });
     Echo["private"]("replyChannel.".concat(window.Auth.user.id)).listen('ReplyEvent', function (e) {
       _this.notifications.unshift({
-        'body': 'Your answer was accepted',
+        'body': 'Someone replied to your question',
         'read': false,
         'created_at': new Date().toISOString(),
         'question_slug': e.question.slug
@@ -49304,7 +49337,9 @@ var render = function() {
   return _c(
     "div",
     [
-      _vm.count
+      _c("h2", { staticClass: "mt-2" }, [_vm._v(_vm._s(_vm.title))]),
+      _vm._v(" "),
+      _vm.userAnswers.length > 0
         ? _c("div", { staticClass: "row mt-4" }, [
             _c("div", { staticClass: "col-md-12" }, [
               _c("div", { staticClass: "card" }, [
@@ -49312,9 +49347,38 @@ var render = function() {
                   "div",
                   { staticClass: "card-body" },
                   [
-                    _c("div", { staticClass: "card-title" }, [
-                      _c("h2", [_vm._v(_vm._s(_vm.title))])
-                    ]),
+                    _vm._m(0),
+                    _vm._v(" "),
+                    _c("hr"),
+                    _vm._v(" "),
+                    _vm._l(_vm.userAnswers, function(answer, index) {
+                      return _c("answer", {
+                        key: answer.id,
+                        attrs: { answer: answer },
+                        on: {
+                          deleted: function($event) {
+                            return _vm.removeUserAnswer(index)
+                          }
+                        }
+                      })
+                    })
+                  ],
+                  2
+                )
+              ])
+            ])
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.answers.length > 0
+        ? _c("div", { staticClass: "row mt-4" }, [
+            _c("div", { staticClass: "col-md-12" }, [
+              _c("div", { staticClass: "card" }, [
+                _c(
+                  "div",
+                  { staticClass: "card-body" },
+                  [
+                    _vm._m(1),
                     _vm._v(" "),
                     _c("hr"),
                     _vm._v(" "),
@@ -49365,7 +49429,24 @@ var render = function() {
     1
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-title" }, [
+      _c("h2", [_vm._v("Your Answers")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-title" }, [
+      _c("h2", [_vm._v("Answers")])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -49564,7 +49645,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "card-title" }, [
-      _c("h3", [_vm._v("Your Answer")])
+      _c("h3", [_vm._v("Add Answer")])
     ])
   }
 ]

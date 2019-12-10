@@ -1,11 +1,26 @@
 <template>
     <div>
-        <div class="row mt-4" v-if="count">
+        <h2 class="mt-2">{{ title }}</h2>
+        <div class="row mt-4" v-if="userAnswers.length > 0">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
                         <div class="card-title">
-                            <h2>{{ title }}</h2>
+                            <h2>Your Answers</h2>
+                        </div>
+                        <hr>
+                        <answer @deleted="removeUserAnswer(index)" v-for="(answer, index) in userAnswers" :answer="answer" :key="answer.id"></answer>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4" v-if="answers.length > 0">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h2>Answers</h2>
                         </div>
                         <hr>
                         <answer @deleted="remove(index)" v-for="(answer, index) in answers" :answer="answer" :key="answer.id"></answer>
@@ -30,7 +45,9 @@ export default {
             questionId: this.question.id,
             count: this.question.answers_count,
             answers: [],
-            nextUrl: null
+            userAnswers: [],
+            nextUrl: null,
+            temp: []
         };
     },
     created(){
@@ -39,7 +56,21 @@ export default {
     methods: {
         fetch(uri){
             axios.get(uri).then(({data}) => {
-                this.answers.push(...data.data);
+                this.temp.push(...data.data);
+                let best;
+                let userAns = [];
+                [...data.data].forEach(ans=>{
+                    if(this.question.best_answer_id === ans.id){
+                        best = ans;
+                    }
+                    else if(window.Auth.signedIn && ans.user_id === window.Auth.user.id){
+                        this.userAnswers.push(ans);
+                    }
+                    else
+                        this.answers.push(ans);
+                });
+                if(best)
+                    this.answers.unshift(best);
                 this.nextUrl = data.next_page_url;
             });
         },
@@ -47,8 +78,12 @@ export default {
             this.answers.splice(index, 1);
             this.count--;
         },
+        removeUserAnswer(index){
+            this.userAnswers.splice(index, 1);
+            this.count--;
+        },
         addAnswer(answer){
-             this.answers.push(answer);
+             this.userAnswers.push(answer);
              this.count++;
         }
     },
