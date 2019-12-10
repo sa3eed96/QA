@@ -31,7 +31,7 @@ class AnswerController extends Controller
     public function store(Question $question, AnswerRequest $request)
     {
         DB::transaction(function() use($request, $question){
-            $answer = $question->answers()->create(['body' => $request->input('body'), 'user_id' => Auth::id()]);
+            $answer = $question->answers()->create(['body' => htmlspecialchars($request->input('body')), 'user_id' => Auth::id()]);
             if($request->file('images')){
                 $images = [];
                 for ($i=0; $i < count($request->file('images')); $i++){

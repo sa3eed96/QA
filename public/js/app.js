@@ -40838,11 +40838,9 @@ var render = function() {
           )
         : _c("div", [
             !_vm.answer.is_to_long || _vm.fullAnswer
-              ? _c("div", { domProps: { innerHTML: _vm._s(_vm.bodyHtml) } })
+              ? _c("div", [_vm._v(_vm._s(_vm.bodyHtml))])
               : _c("div", [
-                  _c("div", {
-                    domProps: { innerHTML: _vm._s(_vm.answer.excerpt) }
-                  }),
+                  _c("div", [_vm._v(_vm._s(_vm.answer.excerpt))]),
                   _vm._v(" "),
                   _c("i", [
                     _c(

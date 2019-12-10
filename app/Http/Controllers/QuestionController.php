@@ -66,7 +66,7 @@ class QuestionController extends Controller
         DB::transaction(function() use($request){
             $question = $request->user()->questions()->create([
                 'title'=> $request->input('title'),
-                'body' => $request->input('body')
+                'body' => htmlspecialchars($request->input('body'))
             ]);
             if($request->input('tags')){
                 $tags = [];

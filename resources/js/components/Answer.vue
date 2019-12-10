@@ -17,9 +17,9 @@
                 <button class="btn btn-outline-secondary" type="button" @click="cancelEdit()">Cancel</button>
             </form>
             <div v-else>
-                <div v-if="!answer.is_to_long || fullAnswer" v-html="bodyHtml"></div>
+                <div v-if="!answer.is_to_long || fullAnswer">{{bodyHtml}}</div>
                 <div v-else>
-                    <div v-html="answer.excerpt"></div>
+                    <div>{{answer.excerpt}}</div>
                     <i><a href="#" @click.prevent="fullAnswer=true">read more</a></i>
                 </div>
                 <div class="text-center mb-4">

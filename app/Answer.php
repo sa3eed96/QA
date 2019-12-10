@@ -23,7 +23,7 @@ class Answer extends Model
     }
 
     public function getBodyHtmlAttribute(){
-        return \Parsedown::instance()->text($this->body);
+        return htmlspecialchars_decode($this->body);
     }
 
     public static function boot(){
@@ -60,6 +60,6 @@ class Answer extends Model
     }
 
     public function getExcerptAttribute(){
-        return str_limit(strip_tags($this->body), 250);
+        return str_limit(htmlspecialchars_decode($this->body), 250);
     }
 }

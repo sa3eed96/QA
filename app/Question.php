@@ -78,7 +78,7 @@ class Question extends Model
 
     
     private function bodyHtml(){
-        return \Parsedown::instance()->text($this->body);
+        return htmlspecialchars_decode($this->body);
     }
     
     public function getExcerptAttribute(){
