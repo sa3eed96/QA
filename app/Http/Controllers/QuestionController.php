@@ -8,6 +8,7 @@ use App\Image;
 use Illuminate\Http\Request;
 use App\Http\Requests\AskQuestionRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use function Rap2hpoutre\RemoveStopWords\remove_stop_words;
 
 class QuestionController extends Controller
@@ -62,26 +63,28 @@ class QuestionController extends Controller
      */
     public function store(AskQuestionRequest $request)
     {
-        $question = $request->user()->questions()->create([
-            'title'=> $request->input('title'),
-            'body' => $request->input('body')
-        ]);
-        if($request->input('tags')){
-            $tags = [];
-            foreach (array($request->input('tags')) as $tag)
+        DB::transaction(function() use($request){
+            $question = $request->user()->questions()->create([
+                'title'=> $request->input('title'),
+                'body' => $request->input('body')
+            ]);
+            if($request->input('tags')){
+                $tags = [];
+                foreach (explode(",", $request->input('tags')) as $tag)
                 array_push($tags, new Tag(['tag' => $tag]));
-            $question->tags()->saveMany($tags);
-        }
-        if($request->file('images')){
-            $images = [];
-            for ($i=0; $i < count($request->file('images')); $i++){
-                array_push($images, new Image(['image' => $request->file('images')[$i]->openFile()->fread($request->file('images')[$i]->getSize())]));
+                $question->tags()->saveMany($tags);
             }
-            $question->images()->saveMany($images);
-        }
-        return response()->json([
-            'slug' =>  $question->slug
-        ]);
+            if($request->file('images')){
+                $images = [];
+                for ($i=0; $i < count($request->file('images')); $i++){
+                    array_push($images, new Image(['image' => $request->file('images')[$i]->openFile()->fread($request->file('images')[$i]->getSize())]));
+                }
+                $question->images()->saveMany($images);
+            }
+            return response()->json([
+                'slug' =>  $question->slug
+            ]);
+        });
     }
 
     /**
@@ -116,17 +119,20 @@ class QuestionController extends Controller
      */
     public function update(AskQuestionRequest $request, Question $question)
     {
-        $question->update($request->only('title', 'body'));
-        if($request->removedTags)
-            $question->tags()->wherein('id',$request->removedTags)->delete();
-        if($request->removedImages)
-            $question->images()->wherein('id',$request->removedImages)->delete();
-        if($request->newTags){
-            $tags = [];
-            foreach ($request->newTags as $tag)
+        $this->authorize('update', $question);
+        DB::transaction(function() use($request, $question){
+            $question->update($request->only('title', 'body'));
+            if($request->removedTags)
+                $question->tags()->wherein('id',$request->removedTags)->delete();
+            if($request->removedImages)
+                $question->images()->wherein('id',$request->removedImages)->delete();
+            if($request->newTags){
+                $tags = [];
+                foreach ($request->newTags as $tag)
                 array_push($tags, new Tag(['tag' => $tag]));
-            $question->tags()->saveMany($tags);
-        }
+                $question->tags()->saveMany($tags);
+            }
+        });
         return response()->json([
             'message' => 'Question Edited',
             'body_html' => $question->body_html,
@@ -142,10 +148,12 @@ class QuestionController extends Controller
      */
     public function destroy(Request $request,Question $question)
     {
-        $question->tags()->delete();
-        $question->images()->delete();
-        $question->answers()->delete();
-        $question->delete();
+        $this->authorize('delete', $question);
+        DB::transaction(function() use($question){
+            $question->images()->delete();
+            $question->votes()->delete();
+            $question->delete();
+        });
         if($request->expectsJson())
             return response()->json([
                 'message' => 'Question Deleted'

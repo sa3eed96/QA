@@ -14,7 +14,7 @@ class CreateImagablesTable extends Migration
     public function up()
     {
         Schema::create('images', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->unsignedInteger('imagable_id');
             $table->string('imagable_type');
             $table->binary('image');

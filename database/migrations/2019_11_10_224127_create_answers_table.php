@@ -14,7 +14,7 @@ class CreateAnswersTable extends Migration
     public function up()
     {
         Schema::create('answers', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->unsignedInteger('question_id');
             $table->unsignedInteger('user_id');
             $table->text('body');
@@ -23,6 +23,10 @@ class CreateAnswersTable extends Migration
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
+        });
+
+        Schema::table('questions',function(Blueprint $table){
+            $table->foreign('best_answer_id')->references('id')->on('answers')->onDelete('SET NULL');
         });
     }
 

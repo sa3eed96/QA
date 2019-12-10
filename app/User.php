@@ -5,6 +5,9 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 use App\Notification;
 
@@ -94,12 +97,37 @@ class User extends Authenticatable
             $relationship->attach($model, [ 'vote' => $vote ]);
         }
 
-        $model->load('votes');
-        $upVotes = (int) $model->votes()->wherePivot('vote', 1)->sum('vote');
-        $downVotes = (int) $model->votes()->wherePivot('vote', -1)->sum('vote');
-        $model->votes_count = $upVotes + $downVotes;
-        $model->save();
+        DB::transaction(function() use ($model, $vote){            
+            $this->updateVoteReputation($model, $vote);
+            $model->load('votes');
+            $upVotes = (int) $model->votes()->wherePivot('vote', 1)->sum('vote');
+            $downVotes = (int) $model->votes()->wherePivot('vote', -1)->sum('vote');
+            $model->votes_count = $upVotes + $downVotes;
+            $model->save();
+        });
         return $model-> votes_count;
     }
 
+    private function updateVoteReputation($model, $vote){
+        $user = $model->user()->get()[0];
+        $currentUser = Auth::user();
+        if(Auth::user() && $user['id'] !== $currentUser->id){
+            $reputation = $user['reputation'];
+            $currentUserReputation = $currentUser->reputation; 
+            if($vote === 1)
+                $reputation += 10;
+            else if($reputation < 4)
+                $reputation = 1;
+            else
+                $reputation -= 2;
+            
+            if($vote === -1 && $currentUserReputation > 3)
+                $currentUserReputation -= 2;
+            else if($vote === -1)
+                $currentUserReputation = 1;
+
+            $user->update(['reputation' => $reputation]);
+            $currentUser->update(['reputation' => $currentUserReputation]);
+        }
+    }
 }

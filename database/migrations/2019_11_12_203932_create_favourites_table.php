@@ -19,6 +19,8 @@ class CreateFavouritesTable extends Migration
             $table->timestamps();
 
             $table->unique(['user_id', 'question_id']);
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
         });
     }
 

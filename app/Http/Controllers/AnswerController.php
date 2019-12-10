@@ -6,6 +6,7 @@ use App\Answer;
 use App\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Image;
 use App\Events\ReplyEvent;
 use App\Http\Requests\AnswerRequest;
@@ -29,14 +30,16 @@ class AnswerController extends Controller
      */
     public function store(Question $question, AnswerRequest $request)
     {
-        $answer = $question->answers()->create(['body' => $request->input('body'), 'user_id' => Auth::id()]);
-        if($request->file('images')){
-            $images = [];
-            for ($i=0; $i < count($request->file('images')); $i++){
-                array_push($images, new Image(['image' => $request->file('images')[$i]->openFile()->fread($request->file('images')[$i]->getSize())]));
+        DB::transaction(function() use($request, $question){
+            $answer = $question->answers()->create(['body' => $request->input('body'), 'user_id' => Auth::id()]);
+            if($request->file('images')){
+                $images = [];
+                for ($i=0; $i < count($request->file('images')); $i++){
+                    array_push($images, new Image(['image' => $request->file('images')[$i]->openFile()->fread($request->file('images')[$i]->getSize())]));
+                }
+                $answer->images()->saveMany($images);
             }
-            $answer->images()->saveMany($images);
-        }
+        });
         broadcast(new ReplyEvent($question));
         return response()->json([
             'message' => 'Answer Created',
@@ -68,11 +71,11 @@ class AnswerController extends Controller
     public function update(AnswerRequest $request, Question $question, Answer $answer)
     {
         $this->authorize('update', $answer);
-        $answer->update($request->validate([
-            'body' => 'required'
-        ]));
-        if($request->removedImages)
-            $answer->images()->wherein('id',$request->removedImages)->delete();
+        DB::transaction(function() use($request, $answer){
+            $answer->update(['body' => $request->body]);
+            if($request->removedImages)
+                $answer->images()->wherein('id',$request->removedImages)->delete();
+        });
         return response()->json([
             'message' => 'Your answer is updated',
             'body_html' => $answer->body_html
@@ -89,8 +92,11 @@ class AnswerController extends Controller
     public function destroy(Question $question, Answer $answer)
     {
         $this->authorize('delete', $answer);
-        $answer->images()->delete();
-        $answer->delete();
+        DB::transaction(function() use($answer){
+            $answer->images()->delete();
+            $answer->votes()->delete();
+            $answer->delete();
+        });
         return response()->json([
             'message' => 'Your Answer is Deleted'
         ]);
