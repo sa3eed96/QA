@@ -51,25 +51,24 @@ export default {
             this.noMore = true;
         });
         
-        Echo.private(`acceptChannel.${window.Auth.user.id}`)
-            .listen('AcceptEvent', (e)=>{
-                this.notifications.unshift({
-                    'body': 'Your answer was accepted',
-                    'read': false,
-                    'created_at': new Date().toISOString(),
-                    'question_slug': e.slug
-                });
-            });
-        Echo.private(`replyChannel.${window.Auth.user.id}`)
-            .listen('ReplyEvent',(e) =>{
-                this.notifications.unshift({
-                    'body': 'Someone replied to your question',
-                    'read': false,
-                    'created_at': new Date().toISOString(),
-                    'question_slug': e.question.slug
-                });            
-            });
-        console.log(Echo.socketId());
+        // Echo.private(`acceptChannel.${window.Auth.user.id}`)
+        //     .listen('AcceptEvent', (e)=>{
+        //         this.notifications.unshift({
+        //             'body': 'Your answer was accepted',
+        //             'read': false,
+        //             'created_at': new Date().toISOString(),
+        //             'question_slug': e.slug
+        //         });
+        //     });
+        // Echo.private(`replyChannel.${window.Auth.user.id}`)
+        //     .listen('ReplyEvent',(e) =>{
+        //         this.notifications.unshift({
+        //             'body': 'Someone replied to your question',
+        //             'read': false,
+        //             'created_at': new Date().toISOString(),
+        //             'question_slug': e.question.slug
+        //         });            
+        //     });
     },
     methods: {
         getUrl(slug){

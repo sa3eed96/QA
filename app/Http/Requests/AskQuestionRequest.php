@@ -25,7 +25,12 @@ class AskQuestionRequest extends FormRequest
     {
         return [
             'title' => 'required|max:255',
-            'body' => 'required'
+            'body' => 'required',
+            'tags.*' => 'nullable|alpha_dash',
+            'newTags.*' => 'nullable|alpha_dash',
+            'removedTags.*' => 'nullable|integer',
+            'removedImages.*' => 'nullable|integer',
+            'images.*' => 'nullable|mimes:jpeg,png'
         ];
     }
 }

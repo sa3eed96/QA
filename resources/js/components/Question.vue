@@ -125,9 +125,9 @@ export default {
             axios.put(`/question/${this.id}`,{
                 title: this.title,
                 body: this.body,
-                removedTags: this.removedTags.map(tag => tag.id),
-                removedImages: this.removedImages.map(img => img.id),
-                newTags: this.newTags
+                removedTags: this.removedTags.length > 0 ? this.removedTags.map(tag => tag.id) : null,
+                removedImages: this.removedImages.length > 0 ? this.removedImages.map(img => img.id) : null,
+                newTags: this.newTags.length > 0 ? this.newTags : null
             }).then(({data}) =>{
                 this.bodyHtml = data.body_html;
                 this.$toast.success(data.message,'Success',{timeout: 3000});

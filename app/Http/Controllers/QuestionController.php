@@ -68,20 +68,29 @@ class QuestionController extends Controller
         ]);
         if($request->input('tags')){
             $tags = [];
-            foreach (explode(',',$request->input('tags')) as $tag)
+            var_dump($request->input('tags'));
+            foreach ($request->input('tags') as $tag)
                 array_push($tags, new Tag(['tag' => $tag]));
             $question->tags()->saveMany($tags);
         }
-        if($request->hasFile('0')){
-            $i=0;
+        if($request->input('images')){
             $images = [];
-            while($request->hasFile(''.$i)){
-                $file = $request->file(''.$i);
-                array_push($images, new Image(['image'=> $file->openFile()->fread($file->getSize())]));
-                ++$i;
+            foreach($request->input('images') as $image){
+                array_push($images, new Image(['image' => $image->openFile()->fread($image->getSize())]));
             }
             $question->images()->saveMany($images);
         }
+
+        // if($request->hasFile('0')){
+        //     $i=0;
+        //     $images = [];
+        //     while($request->hasFile(''.$i)){
+        //         $file = $request->file(''.$i);
+        //         array_push($images, new Image(['image'=> $file->openFile()->fread($file->getSize())]));
+        //         ++$i;
+        //     }
+        //     $question->images()->saveMany($images);
+        // }
         return response()->json([
             'slug' =>  $question->slug
         ]);
@@ -143,7 +152,7 @@ class QuestionController extends Controller
      * @param  \App\Question  $question
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Question $question)
+    public function destroy(Request $request,Question $question)
     {
         $question->delete();
         if($request->expectsJson())

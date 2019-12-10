@@ -38,7 +38,7 @@ export default {
             body:'',
             tags: [],
             tagsInput: '',
-            images: null
+            images: []
         };
     },
     methods: {
@@ -46,12 +46,13 @@ export default {
             const formData = new FormData();
             formData.append('body', this.body);
             formData.append('title', this.title);
-            formData.append('tags', this.tags.join());
-            if(this.images){
-                for(let i=0; i< this.images.length;++i){
-                    formData.append(`${i}`, this.images[i]);
-                }
-            }
+            formData.append('tags', this.tags.length > 0 ? this.tags : null);
+            // if(this.images){
+            //     for(let i=0; i< this.images.length;++i){
+            //         formData.append(`${i}`, this.images[i]);
+            //     }
+            // }
+            formData.append('images',this.images.length > 0 ? this.images : null);
             axios.post(`/question`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
