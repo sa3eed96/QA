@@ -80,11 +80,13 @@
               </div>
             </div>
             <div class="d-flex mt-4 justify-content-center">
+              <button @click="fetch(questions.first_page_url,'questions')" :class="questions.current_page !== 1 ? '':'disabled'" class="mr-1 btn btn-secondary btn-sm"> &lt;&lt; </button>
               <button @click="fetch(questions.prev_page_url,'questions')" :class="questions.prev_page_url !== null ? '':'disabled'" class="btn btn-secondary btn-sm"> &lt; </button>
               <div class="text-dark mx-2 font-weight-bold">
-                {{questions.current_page}}
+                {{questions.current_page}} - {{questions.last_page}}
               </div>
               <button @click="fetch(questions.next_page_url,'questions')" :class="questions.next_page_url !== null ? '': 'disabled'" class="btn btn-secondary btn-sm">&gt;</button>
+              <button @click="fetch(questions.last_page_url,'questions')" :class="questions.last_page_url !== questions.last_page ? '': 'disabled'" class="ml-1 btn btn-secondary btn-sm">&gt;&gt;</button>
             </div>
           </div>
           <div v-else>
@@ -103,11 +105,13 @@
               <div v-html="answer.body_html"></div>
             </div>
             <div class="d-flex mt-4 justify-content-center">
+              <button @click="fetch(answers.first_page_url,'answers')" :class="answers.current_page !== 1 ? '':'disabled'" class="mr-1 btn btn-secondary btn-sm"> &lt;&lt; </button>
               <button @click="fetch(answers.prev_page_url,'answers')" :class="answers.prev_page_url !== null ? '':'disabled'" class="btn btn-secondary btn-sm"> &lt; </button>
               <div class="text-dark mx-2 font-weight-bold">
-                {{answers.current_page}}
+                {{answers.current_page}} - {{answers.last_page}}
               </div>
               <button @click="fetch(answers.next_page_url,'answers')" :class="answers.next_page_url !== null ? '': 'disabled'" class="btn btn-secondary btn-sm">&gt;</button>
+              <button @click="fetch(answers.last_page_url,'answers')" :class="answers.last_page_url !== answers.last_page ? '': 'disabled'" class="ml-1 btn btn-secondary btn-sm">&gt;&gt;</button>
             </div>
           </div>
           <div v-else>

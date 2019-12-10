@@ -2663,6 +2663,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["user"],
   data: function data() {
@@ -41821,6 +41825,26 @@ var render = function() {
                           {
                             staticClass: "btn btn-secondary btn-sm",
                             class:
+                              _vm.questions.current_page !== 1
+                                ? ""
+                                : "disabled",
+                            on: {
+                              click: function($event) {
+                                return _vm.fetch(
+                                  _vm.questions.first_page_url,
+                                  "questions"
+                                )
+                              }
+                            }
+                          },
+                          [_vm._v(" << ")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-secondary btn-sm",
+                            class:
                               _vm.questions.prev_page_url !== null
                                 ? ""
                                 : "disabled",
@@ -41843,6 +41867,8 @@ var render = function() {
                             _vm._v(
                               "\r\n                " +
                                 _vm._s(_vm.questions.current_page) +
+                                " - " +
+                                _vm._s(_vm.questions.last_page) +
                                 "\r\n              "
                             )
                           ]
@@ -41866,6 +41892,27 @@ var render = function() {
                             }
                           },
                           [_vm._v(">")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-secondary btn-sm",
+                            class:
+                              _vm.questions.last_page_url !==
+                              _vm.questions.last_page
+                                ? ""
+                                : "disabled",
+                            on: {
+                              click: function($event) {
+                                return _vm.fetch(
+                                  _vm.questions.last_page_url,
+                                  "questions"
+                                )
+                              }
+                            }
+                          },
+                          [_vm._v(">>")]
                         )
                       ]
                     )
@@ -41923,6 +41970,24 @@ var render = function() {
                           {
                             staticClass: "btn btn-secondary btn-sm",
                             class:
+                              _vm.answers.current_page !== 1 ? "" : "disabled",
+                            on: {
+                              click: function($event) {
+                                return _vm.fetch(
+                                  _vm.answers.first_page_url,
+                                  "answers"
+                                )
+                              }
+                            }
+                          },
+                          [_vm._v(" << ")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-secondary btn-sm",
+                            class:
                               _vm.answers.prev_page_url !== null
                                 ? ""
                                 : "disabled",
@@ -41945,6 +42010,8 @@ var render = function() {
                             _vm._v(
                               "\r\n                " +
                                 _vm._s(_vm.answers.current_page) +
+                                " - " +
+                                _vm._s(_vm.answers.last_page) +
                                 "\r\n              "
                             )
                           ]
@@ -41968,6 +42035,27 @@ var render = function() {
                             }
                           },
                           [_vm._v(">")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-secondary btn-sm",
+                            class:
+                              _vm.answers.last_page_url !==
+                              _vm.answers.last_page
+                                ? ""
+                                : "disabled",
+                            on: {
+                              click: function($event) {
+                                return _vm.fetch(
+                                  _vm.answers.last_page_url,
+                                  "answers"
+                                )
+                              }
+                            }
+                          },
+                          [_vm._v(">>")]
                         )
                       ]
                     )
