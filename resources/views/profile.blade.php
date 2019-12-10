@@ -1,5 +1,5 @@
 @extends('layouts.app')
 
 @section('content')
-    <profile :user="{{$user}}"></profile>
+    <profile :questions="{{$questions}}" :user="{{$user}}"></profile>
 @endsection

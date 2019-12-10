@@ -6,7 +6,7 @@
             <div class="card-header">Popular Tags</div>
             <div class="card-body">
                 @forelse ($tags as $tag)
-                    <a  href="/question?tags={{$tag}}" class="text-dark btn btn-outline-primary m-1 p-1">
+                    <a  href="/question?tags={{$tag->tag}}" class="text-dark btn btn-outline-primary m-1 p-1">
                         {{ $tag->tag }}
                         <div class="font-weight-light d-inline">
                             x{{$tag->count}}

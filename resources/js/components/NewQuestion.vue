@@ -3,6 +3,9 @@
         <div class="form-group">
             <label for="title">Question Title</label>
             <input type="text" id="title" v-model="title" class="form-control" required>
+            <div v-if="errors.title" class="alert alert-danger mb-1">
+              {{ errors.title[0] }}
+            </div>
         </div>
         <div class="form-row mb-1">
             <div class="col">
@@ -20,8 +23,14 @@
         <div class="form-group">
             <label for="body">What is the Question</label>
             <textarea name="body" id="body" v-model="body" class="form-control" rows="10"></textarea>
+            <div v-if="errors.body" class="alert alert-danger mb-1">
+              {{errors.body[0]}}
+            </div>
         </div>
         <upload-image @imagesAdded="addImages"></upload-image>
+        <div v-if="errors.images" class="alert alert-danger mb-1">
+              {{errors.images[0]}}
+        </div>
         <br>
         <div class="form-group">
             <button class="btn btn-lg btn-outline-primary">Create</button>
@@ -38,7 +47,8 @@ export default {
             body:'',
             tags: [],
             tagsInput: '',
-            images: []
+            images: [],
+            errors: []
         };
     },
     methods: {
@@ -47,18 +57,19 @@ export default {
             formData.append('body', this.body);
             formData.append('title', this.title);
             formData.append('tags', this.tags.length > 0 ? this.tags : null);
-            // if(this.images){
-            //     for(let i=0; i< this.images.length;++i){
-            //         formData.append(`${i}`, this.images[i]);
-            //     }
-            // }
-            formData.append('images',this.images.length > 0 ? this.images : null);
+            if(this.images){
+                for(let i=0; i< this.images.length;++i){
+                    formData.append(`images[${i}]`, this.images[i]);
+                }
+            }
             axios.post(`/question`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
             }).then(({data})=>{
-                window.location.href = `/question/${data.slug}`;
+               window.location.href = `/question/${data.slug}`;
+            }).catch(err=>{
+                this.errors = err.response.data.errors;
             });
         },
         addTags(){

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\UserRequest;
 
 class UserController extends Controller
 {
@@ -20,7 +21,11 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return view('profile',compact('user'));
+        $questions = $user->questions()->get();
+        return view('profile',[
+            'user' => $user,
+            'questions' => $questions
+        ]);
     }
 
     /**
@@ -30,14 +35,14 @@ class UserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user)
     {
         $this->authorize('update', $user);
-        $user->update($request->validate([
-            'name' => 'required'
-        ]));
+        $user->update($request->only('name','age','country'));
         return response()->json([
-            'name' => $user->name
+            'name' => $user->name,
+            'age' => $user->age,
+            'country' => $user->country
         ]);
     }
 

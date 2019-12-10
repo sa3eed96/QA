@@ -7,12 +7,21 @@
         <form @submit.prevent="update()" class="card-body">
           <div class="form-group">
             <input class="form-control" type="text" v-model="name" placeholder="Name">
+            <div v-if="errors.name" class="alert alert-danger mb-1">
+              {{errors.name[0]}}
+            </div>
           </div>
           <div class="form-group">
             <input class="form-control" type="text" v-model="age" placeholder="Age">
+            <div v-if="errors.age" class="alert alert-danger mb-1">
+              {{errors.age[0]}}
+            </div>
           </div>
           <div class="form-group">
             <input class="form-control" type="text" v-model="country" placeholder="Country">
+            <div v-if="errors.country" class="alert alert-danger mb-1">
+              {{errors.country[0]}}
+            </div>
           </div>
           <button type="submit" class="btn btn-primary">Update</button>
           <button type="button" class="btn btn-secondary" @click="cancel()">Cancel</button>
@@ -39,29 +48,34 @@
       <div class="card">
         <div class="card-header">{{user.name}}'s Questions</div>
         <div class="card-body">
-          <div class="media post" v-for="question in user.questions" v-bind:key="question.id">
-            <div class="d-flex felx-column counters">
-              <div class="vote">
-                <strong>{{question.votes_count}}</strong>
-                votes
+          <div v-if="questions.length > 0">
+            <div class="media post" v-for="question in questions" v-bind:key="question.id">
+              <div class="d-flex felx-column counters">
+                <div class="vote">
+                  <strong>{{question.votes_count}}</strong>
+                  votes
+                </div>
+                <div class="status" :class="question.status">
+                  <strong>{{question.answers_count}}</strong>
+                  answers
+                </div>
+                <div class="view">{{question.views}}views</div>
               </div>
-              <div class="status" :class="question.status">
-                <strong>{{question.answers_count}}</strong>
-                answers
+              <div class="media-body">
+                <div class="d-flex align-items-center">
+                  <h3 class="mt-0">
+                    <a :href="getQuestionUrl(question.slug)">{{ question.title }}</a>
+                  </h3>
+                </div>
+                <p class="lead">
+                  <small class="text-muted">{{question.created_date}}</small>
+                </p>
+                {{ question.excerpt }}
               </div>
-              <div class="view">{{question.views}}views</div>
             </div>
-            <div class="media-body">
-              <div class="d-flex align-items-center">
-                <h3 class="mt-0">
-                  <a :href="getQuestionUrl(question.slug)">{{ question.title }}</a>
-                </h3>
-              </div>
-              <p class="lead">
-                <small class="text-muted">{{question.created_date}}</small>
-              </p>
-              {{ question.excerpt }}
-            </div>
+          </div>
+          <div v-else>
+            There is no questions to show
           </div>
         </div>
       </div>
@@ -72,14 +86,16 @@
 
 <script>
 export default {
-  props: ["user"],
+  props: ["user",'questions'],
   data(){
     return {
       editing: false,
       name: this.user.name,
-      age: this.user.age ? user.age : null,
-      country: this.user.country ? user.country : null,
-      beforeEdit: {}
+      questionsNextUrl: this.questions.next_page_url,
+      age: this.user.age,
+      country: this.user.country,
+      beforeEdit: {},
+      errors: {}
     };
   },
   methods: {
@@ -88,13 +104,16 @@ export default {
     },
     update(){
       axios.put(`/user/${this.user.id}`,{
-        name: this.name
+        name: this.name,
+        age: this.age,
+        country: this.country
       }).then(({data}) =>{
         this.editing = false;          
         this.$toast.success('Info Updated', 'Success',{timeout: 3000});
-
+        this.errors = {};
       }).catch(err=>{
           this.$toast.error(err.response.data.message, 'Error',{timeout: 3000});
+          this.errors = err.response.data.errors;
       });
     },
     edit(){
@@ -109,6 +128,7 @@ export default {
       this.name = this.beforeEdit.name;
       this.age = this.beforeEdit.age;
       this.country = this.beforeEdit.country;
+      this.errors = {};
       this.editing = false;
     }
   },

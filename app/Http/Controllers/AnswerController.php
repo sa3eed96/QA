@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Image;
 use App\Events\ReplyEvent;
+use App\Http\Requests\AnswerRequest;
 
 class AnswerController extends Controller
 {
@@ -26,16 +27,13 @@ class AnswerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Question $question, Request $request)
+    public function store(Question $question, AnswerRequest $request)
     {
         $answer = $question->answers()->create(['body' => $request->input('body'), 'user_id' => Auth::id()]);
-        if($request->hasFile('0')){
-            $i=0;
+        if($request->file('images')){
             $images = [];
-            while($request->hasFile(''.$i)){
-                $file = $request->file(''.$i);
-                array_push($images, new Image(['image'=> $file->openFile()->fread($file->getSize())]));
-                ++$i;
+            for ($i=0; $i < count($request->file('images')); $i++){
+                array_push($images, new Image(['image' => $request->file('images')[$i]->openFile()->fread($request->file('images')[$i]->getSize())]));
             }
             $answer->images()->saveMany($images);
         }
@@ -67,7 +65,7 @@ class AnswerController extends Controller
      * @param  \App\Answer  $answer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Question $question, Answer $answer)
+    public function update(AnswerRequest $request, Question $question, Answer $answer)
     {
         $this->authorize('update', $answer);
         $answer->update($request->validate([
@@ -91,6 +89,7 @@ class AnswerController extends Controller
     public function destroy(Question $question, Answer $answer)
     {
         $this->authorize('delete', $answer);
+        $answer->images()->delete();
         $answer->delete();
         return response()->json([
             'message' => 'Your Answer is Deleted'

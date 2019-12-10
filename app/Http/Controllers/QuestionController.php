@@ -68,29 +68,17 @@ class QuestionController extends Controller
         ]);
         if($request->input('tags')){
             $tags = [];
-            var_dump($request->input('tags'));
-            foreach ($request->input('tags') as $tag)
+            foreach (array($request->input('tags')) as $tag)
                 array_push($tags, new Tag(['tag' => $tag]));
             $question->tags()->saveMany($tags);
         }
-        if($request->input('images')){
+        if($request->file('images')){
             $images = [];
-            foreach($request->input('images') as $image){
-                array_push($images, new Image(['image' => $image->openFile()->fread($image->getSize())]));
+            for ($i=0; $i < count($request->file('images')); $i++){
+                array_push($images, new Image(['image' => $request->file('images')[$i]->openFile()->fread($request->file('images')[$i]->getSize())]));
             }
             $question->images()->saveMany($images);
         }
-
-        // if($request->hasFile('0')){
-        //     $i=0;
-        //     $images = [];
-        //     while($request->hasFile(''.$i)){
-        //         $file = $request->file(''.$i);
-        //         array_push($images, new Image(['image'=> $file->openFile()->fread($file->getSize())]));
-        //         ++$i;
-        //     }
-        //     $question->images()->saveMany($images);
-        // }
         return response()->json([
             'slug' =>  $question->slug
         ]);
@@ -154,6 +142,9 @@ class QuestionController extends Controller
      */
     public function destroy(Request $request,Question $question)
     {
+        $question->tags()->delete();
+        $question->images()->delete();
+        $question->answers()->delete();
         $question->delete();
         if($request->expectsJson())
             return response()->json([

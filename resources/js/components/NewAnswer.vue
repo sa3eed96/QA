@@ -37,7 +37,7 @@ export default {
             formData.append('body', this.body);
             if(this.images){
                 for(let i=0; i< this.images.length;++i){
-                    formData.append(`${i}`, this.images[i]);
+                    formData.append(`images[${i}]`, this.images[i]);
                 }
             }
             axios.post(`/question/${this.questionId}/answer`, formData,{
@@ -45,12 +45,12 @@ export default {
                         'Content-Type': 'multipart/form-data'
                     }
             }).then(({data}) =>{
-                this.$toast.success(data.message,'Success');
+                this.$toast.success(`${data.message}`,'Success');
                 this.body = '';
                 this.images = null;
                 this.$emit('answerCreated', data.answer);
             }).catch(err => {
-                this.$toast.error(err.response.data.message,'Error');
+                this.$toast.error(`${err.response.data.message}`,'Error');
             });
         },
         addImages(images){

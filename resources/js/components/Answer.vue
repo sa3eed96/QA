@@ -31,7 +31,7 @@
                     <div class="col-4"></div>
                     <div class="col-4">
                         <div class="float-right">
-                            <user-info :model = "answer" label="Answerd"></user-info>
+                            <user-info :model="answer" label="Answerd"></user-info>
                         </div>
                     </div>
                 </div>

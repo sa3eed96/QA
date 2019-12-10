@@ -2265,7 +2265,7 @@ __webpack_require__.r(__webpack_exports__);
 
       if (this.images) {
         for (var i = 0; i < this.images.length; ++i) {
-          formData.append("".concat(i), this.images[i]);
+          formData.append("images[".concat(i, "]"), this.images[i]);
         }
       }
 
@@ -2276,14 +2276,14 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (_ref) {
         var data = _ref.data;
 
-        _this.$toast.success(data.message, 'Success');
+        _this.$toast.success("".concat(data.message), 'Success');
 
         _this.body = '';
         _this.images = null;
 
         _this.$emit('answerCreated', data.answer);
       })["catch"](function (err) {
-        _this.$toast.error(err.response.data.message, 'Error');
+        _this.$toast.error("".concat(err.response.data.message), 'Error');
       });
     },
     addImages: function addImages(images) {
@@ -2343,6 +2343,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2351,21 +2360,25 @@ __webpack_require__.r(__webpack_exports__);
       body: '',
       tags: [],
       tagsInput: '',
-      images: []
+      images: [],
+      errors: []
     };
   },
   methods: {
     createQuestion: function createQuestion() {
+      var _this = this;
+
       var formData = new FormData();
       formData.append('body', this.body);
       formData.append('title', this.title);
-      formData.append('tags', this.tags.length > 0 ? this.tags : null); // if(this.images){
-      //     for(let i=0; i< this.images.length;++i){
-      //         formData.append(`${i}`, this.images[i]);
-      //     }
-      // }
+      formData.append('tags', this.tags.length > 0 ? this.tags : null);
 
-      formData.append('images', this.images.length > 0 ? this.images : null);
+      if (this.images) {
+        for (var i = 0; i < this.images.length; ++i) {
+          formData.append("images[".concat(i, "]"), this.images[i]);
+        }
+      }
+
       axios.post("/question", formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -2373,14 +2386,16 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (_ref) {
         var data = _ref.data;
         window.location.href = "/question/".concat(data.slug);
+      })["catch"](function (err) {
+        _this.errors = err.response.data.errors;
       });
     },
     addTags: function addTags() {
-      var _this = this;
+      var _this2 = this;
 
       var tags = this.tagsInput.toLowerCase().split(' ');
       tags.forEach(function (tag) {
-        if (_this.tags.indexOf(tag) === -1 && !tag.match(/[!_()\[\]\/\\\|^$\*\.@#]/) && tag.length > 1) _this.tags.push(tag);
+        if (_this2.tags.indexOf(tag) === -1 && !tag.match(/[!_()\[\]\/\\\|^$\*\.@#]/) && tag.length > 1) _this2.tags.push(tag);
       });
       this.tagsInput = '';
     },
@@ -2598,15 +2613,31 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["user"],
+  props: ["user", 'questions'],
   data: function data() {
     return {
       editing: false,
       name: this.user.name,
-      age: this.user.age ? user.age : null,
-      country: this.user.country ? user.country : null,
-      beforeEdit: {}
+      questionsNextUrl: this.questions.next_page_url,
+      age: this.user.age,
+      country: this.user.country,
+      beforeEdit: {},
+      errors: {}
     };
   },
   methods: {
@@ -2617,7 +2648,9 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.put("/user/".concat(this.user.id), {
-        name: this.name
+        name: this.name,
+        age: this.age,
+        country: this.country
       }).then(function (_ref) {
         var data = _ref.data;
         _this.editing = false;
@@ -2625,10 +2658,14 @@ __webpack_require__.r(__webpack_exports__);
         _this.$toast.success('Info Updated', 'Success', {
           timeout: 3000
         });
+
+        _this.errors = {};
       })["catch"](function (err) {
         _this.$toast.error(err.response.data.message, 'Error', {
           timeout: 3000
         });
+
+        _this.errors = err.response.data.errors;
       });
     },
     edit: function edit() {
@@ -2643,6 +2680,7 @@ __webpack_require__.r(__webpack_exports__);
       this.name = this.beforeEdit.name;
       this.age = this.beforeEdit.age;
       this.country = this.beforeEdit.country;
+      this.errors = {};
       this.editing = false;
     }
   }
@@ -41115,7 +41153,15 @@ var render = function() {
               _vm.title = $event.target.value
             }
           }
-        })
+        }),
+        _vm._v(" "),
+        _vm.errors.title
+          ? _c("div", { staticClass: "alert alert-danger mb-1" }, [
+              _vm._v(
+                "\n          " + _vm._s(_vm.errors.title[0]) + "\n        "
+              )
+            ])
+          : _vm._e()
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "form-row mb-1" }, [
@@ -41203,10 +41249,22 @@ var render = function() {
               _vm.body = $event.target.value
             }
           }
-        })
+        }),
+        _vm._v(" "),
+        _vm.errors.body
+          ? _c("div", { staticClass: "alert alert-danger mb-1" }, [
+              _vm._v("\n          " + _vm._s(_vm.errors.body[0]) + "\n        ")
+            ])
+          : _vm._e()
       ]),
       _vm._v(" "),
       _c("upload-image", { on: { imagesAdded: _vm.addImages } }),
+      _vm._v(" "),
+      _vm.errors.images
+        ? _c("div", { staticClass: "alert alert-danger mb-1" }, [
+            _vm._v("\n          " + _vm._s(_vm.errors.images[0]) + "\n    ")
+          ])
+        : _vm._e(),
       _vm._v(" "),
       _c("br"),
       _vm._v(" "),
@@ -41419,7 +41477,17 @@ var render = function() {
                           _vm.name = $event.target.value
                         }
                       }
-                    })
+                    }),
+                    _vm._v(" "),
+                    _vm.errors.name
+                      ? _c("div", { staticClass: "alert alert-danger mb-1" }, [
+                          _vm._v(
+                            "\r\n              " +
+                              _vm._s(_vm.errors.name[0]) +
+                              "\r\n            "
+                          )
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-group" }, [
@@ -41443,7 +41511,17 @@ var render = function() {
                           _vm.age = $event.target.value
                         }
                       }
-                    })
+                    }),
+                    _vm._v(" "),
+                    _vm.errors.age
+                      ? _c("div", { staticClass: "alert alert-danger mb-1" }, [
+                          _vm._v(
+                            "\r\n              " +
+                              _vm._s(_vm.errors.age[0]) +
+                              "\r\n            "
+                          )
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-group" }, [
@@ -41467,7 +41545,17 @@ var render = function() {
                           _vm.country = $event.target.value
                         }
                       }
-                    })
+                    }),
+                    _vm._v(" "),
+                    _vm.errors.country
+                      ? _c("div", { staticClass: "alert alert-danger mb-1" }, [
+                          _vm._v(
+                            "\r\n              " +
+                              _vm._s(_vm.errors.country[0]) +
+                              "\r\n            "
+                          )
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
                   _c(
@@ -41549,63 +41637,88 @@ var render = function() {
             _vm._v(_vm._s(_vm.user.name) + "'s Questions")
           ]),
           _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "card-body" },
-            _vm._l(_vm.user.questions, function(question) {
-              return _c(
-                "div",
-                { key: question.id, staticClass: "media post" },
-                [
-                  _c("div", { staticClass: "d-flex felx-column counters" }, [
-                    _c("div", { staticClass: "vote" }, [
-                      _c("strong", [_vm._v(_vm._s(question.votes_count))]),
-                      _vm._v("\r\n                votes\r\n              ")
-                    ]),
-                    _vm._v(" "),
-                    _c(
+          _c("div", { staticClass: "card-body" }, [
+            _vm.questions.length > 0
+              ? _c(
+                  "div",
+                  _vm._l(_vm.questions, function(question) {
+                    return _c(
                       "div",
-                      { staticClass: "status", class: question.status },
+                      { key: question.id, staticClass: "media post" },
                       [
-                        _c("strong", [_vm._v(_vm._s(question.answers_count))]),
-                        _vm._v("\r\n                answers\r\n              ")
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "view" }, [
-                      _vm._v(_vm._s(question.views) + "views")
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "media-body" }, [
-                    _c("div", { staticClass: "d-flex align-items-center" }, [
-                      _c("h3", { staticClass: "mt-0" }, [
                         _c(
-                          "a",
-                          {
-                            attrs: { href: _vm.getQuestionUrl(question.slug) }
-                          },
-                          [_vm._v(_vm._s(question.title))]
-                        )
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("p", { staticClass: "lead" }, [
-                      _c("small", { staticClass: "text-muted" }, [
-                        _vm._v(_vm._s(question.created_date))
-                      ])
-                    ]),
-                    _vm._v(
-                      "\r\n              " +
-                        _vm._s(question.excerpt) +
-                        "\r\n            "
+                          "div",
+                          { staticClass: "d-flex felx-column counters" },
+                          [
+                            _c("div", { staticClass: "vote" }, [
+                              _c("strong", [
+                                _vm._v(_vm._s(question.votes_count))
+                              ]),
+                              _vm._v(
+                                "\r\n                  votes\r\n                "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              { staticClass: "status", class: question.status },
+                              [
+                                _c("strong", [
+                                  _vm._v(_vm._s(question.answers_count))
+                                ]),
+                                _vm._v(
+                                  "\r\n                  answers\r\n                "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "view" }, [
+                              _vm._v(_vm._s(question.views) + "views")
+                            ])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "media-body" }, [
+                          _c(
+                            "div",
+                            { staticClass: "d-flex align-items-center" },
+                            [
+                              _c("h3", { staticClass: "mt-0" }, [
+                                _c(
+                                  "a",
+                                  {
+                                    attrs: {
+                                      href: _vm.getQuestionUrl(question.slug)
+                                    }
+                                  },
+                                  [_vm._v(_vm._s(question.title))]
+                                )
+                              ])
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c("p", { staticClass: "lead" }, [
+                            _c("small", { staticClass: "text-muted" }, [
+                              _vm._v(_vm._s(question.created_date))
+                            ])
+                          ]),
+                          _vm._v(
+                            "\r\n                " +
+                              _vm._s(question.excerpt) +
+                              "\r\n              "
+                          )
+                        ])
+                      ]
                     )
-                  ])
-                ]
-              )
-            }),
-            0
-          )
+                  }),
+                  0
+                )
+              : _c("div", [
+                  _vm._v(
+                    "\r\n            There is no questions to show\r\n          "
+                  )
+                ])
+          ])
         ])
       ])
     ])

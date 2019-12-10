@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\title;
 
-class AskQuestionRequest extends FormRequest
+class AnswerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,12 +24,7 @@ class AskQuestionRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => ['required', 'string', 'max:255', new title],
             'body' => 'required',
-            'tags.*' => 'nullable|alpha_dash|distinct',
-            'newTags.*' => 'nullable|alpha_dash|distinct',
-            'removedTags.*' => 'nullable|integer',
-            'removedImages.*' => 'nullable|integer',
             'images.*' => 'nullable|mimes:jpeg,png'
         ];
     }
