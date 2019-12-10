@@ -40,8 +40,14 @@
           <div>
             Country: {{country ? country : 'not specified'}}
           </div>
-          <button class="btn btn-primary" @click="edit()">Edit</button>
+          <button v-if="authorize('modifyProfile', user)" class="btn btn-primary" @click="edit()">Edit</button>
         </div>
+      </div>
+      <div class="my-4 p-4 border">
+        <h4>Reputation: <span class="bg-success rounded py-2 px-3 font-weight-bold text-white">{{user.reputation}}</span></h4>
+      </div>
+      <div>
+        <button v-if="authorize('modifyProfile', user)" @click="deleteAccount()" class="btn btn-danger" >Delete Account</button>
       </div>
     </div>
     <div class="col-sm-12 col-md-6">
@@ -130,6 +136,11 @@ export default {
       this.country = this.beforeEdit.country;
       this.errors = {};
       this.editing = false;
+    },
+    deleteAccount(){
+      axios.delete(`/user/${this.user.id}`).then(res=>{
+        window.location.href = "/";
+      });
     }
   },
 };

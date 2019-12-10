@@ -2627,6 +2627,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["user", 'questions'],
   data: function data() {
@@ -2682,6 +2688,11 @@ __webpack_require__.r(__webpack_exports__);
       this.country = this.beforeEdit.country;
       this.errors = {};
       this.editing = false;
+    },
+    deleteAccount: function deleteAccount() {
+      axios["delete"]("/user/".concat(this.user.id)).then(function (res) {
+        window.location.href = "/";
+      });
     }
   }
 });
@@ -41615,20 +41626,53 @@ var render = function() {
                   )
                 ]),
                 _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-primary",
-                    on: {
-                      click: function($event) {
-                        return _vm.edit()
-                      }
-                    }
-                  },
-                  [_vm._v("Edit")]
-                )
+                _vm.authorize("modifyProfile", _vm.user)
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        on: {
+                          click: function($event) {
+                            return _vm.edit()
+                          }
+                        }
+                      },
+                      [_vm._v("Edit")]
+                    )
+                  : _vm._e()
               ])
-            ])
+            ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "my-4 p-4 border" }, [
+          _c("h4", [
+            _vm._v("Reputation: "),
+            _c(
+              "span",
+              {
+                staticClass:
+                  "bg-success rounded py-2 px-3 font-weight-bold text-white"
+              },
+              [_vm._v(_vm._s(_vm.user.reputation))]
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", [
+          _vm.authorize("modifyProfile", _vm.user)
+            ? _c(
+                "button",
+                {
+                  staticClass: "btn btn-danger",
+                  on: {
+                    click: function($event) {
+                      return _vm.deleteAccount()
+                    }
+                  }
+                },
+                [_vm._v("Delete Account")]
+              )
+            : _vm._e()
+        ])
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "col-sm-12 col-md-6" }, [
@@ -59317,6 +59361,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   accept: function accept(user, answer) {
     return user.id === answer.question.user_id;
+  },
+  modifyProfile: function modifyProfile(user, visitingUser) {
+    return user.id === visitingUser.id;
   }
 });
 
