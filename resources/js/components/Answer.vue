@@ -24,7 +24,7 @@
                 <div class="row">
                     <div class="col-4">
                         <div class="ml-auto">
-                            <a v-if="authorize('modify', answer)" @click.prevent="editing=true" class="btn btn-sm btn-outline-info">Edit</a>
+                            <a id="answerEditButton" v-if="authorize('modify', answer)" @click.prevent="editing=true" class="btn btn-sm btn-outline-info">Edit</a>
                             <button v-if="authorize('modify', answer)" @click="destroy" class="btn btn-outline-danger btn-sm">Delete</button>
                         </div>
                     </div>
@@ -109,6 +109,10 @@ export default {
   height:85px;  
   width:85px;
   cursor:pointer;
+}
+
+#answerEditButton{
+    cursor: pointer;
 }
 
 </style>

@@ -2633,8 +2633,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["user", 'questions'],
+  props: ["user", 'questions', 'answers'],
   data: function data() {
     return {
       editing: false,
@@ -2690,7 +2706,7 @@ __webpack_require__.r(__webpack_exports__);
       this.editing = false;
     },
     deleteAccount: function deleteAccount() {
-      axios["delete"]("/user/".concat(this.user.id)).then(function (res) {
+      if (confirm('Are you sure you want to delete your account?')) axios["delete"]("/user/".concat(this.user.id)).then(function (res) {
         window.location.href = "/";
       });
     }
@@ -7629,7 +7645,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.img-edit[data-v-98a0422e]{\r\n  height:75px;  \r\n  width:75px;\n}\n.img-edit[data-v-98a0422e]:hover{\r\n  height:85px;  \r\n  width:85px;\r\n  cursor:pointer;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.img-edit[data-v-98a0422e]{\r\n  height:75px;  \r\n  width:75px;\n}\n.img-edit[data-v-98a0422e]:hover{\r\n  height:85px;  \r\n  width:85px;\r\n  cursor:pointer;\n}\n#answerEditButton[data-v-98a0422e]{\r\n    cursor: pointer;\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -7686,7 +7702,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.img-edit[data-v-0fecee51]{\r\n  height:75px;  \r\n  width:75px;\n}\n.img-edit[data-v-0fecee51]:hover{\r\n  height:85px;  \r\n  width:85px;\r\n  cursor:pointer;\n}\n.tag-edit[data-v-0fecee51]{\r\n    cursor: pointer;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.img-edit[data-v-0fecee51]{\r\n  height:75px;  \r\n  width:75px;\n}\n.img-edit[data-v-0fecee51]:hover{\r\n  height:85px;  \r\n  width:85px;\r\n  cursor:pointer;\n}\n.tag-edit[data-v-0fecee51]{\r\n    cursor: pointer;\n}\n#questionEditButton[data-v-0fecee51]{\r\n    cursor: pointer;\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -40797,6 +40813,7 @@ var render = function() {
                         "a",
                         {
                           staticClass: "btn btn-sm btn-outline-info",
+                          attrs: { id: "answerEditButton" },
                           on: {
                             click: function($event) {
                               $event.preventDefault()
@@ -41676,7 +41693,7 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "col-sm-12 col-md-6" }, [
-        _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card mb-4" }, [
           _c("div", { staticClass: "card-header" }, [
             _vm._v(_vm._s(_vm.user.name) + "'s Questions")
           ]),
@@ -41760,6 +41777,44 @@ var render = function() {
               : _c("div", [
                   _vm._v(
                     "\r\n            There is no questions to show\r\n          "
+                  )
+                ])
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card" }, [
+          _c("div", { staticClass: "card-header" }, [
+            _vm._v(_vm._s(_vm.user.name) + "'s Answers")
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-body" }, [
+            _vm.answers.length > 0
+              ? _c(
+                  "div",
+                  _vm._l(_vm.answers, function(answer) {
+                    return _c("div", { key: answer.id, staticClass: "post" }, [
+                      _c("h3", { staticClass: "mt-0" }, [
+                        _c(
+                          "a",
+                          {
+                            attrs: {
+                              href: _vm.getQuestionUrl(answer.question_slug)
+                            }
+                          },
+                          [_vm._v(_vm._s(answer.question_title))]
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", {
+                        domProps: { innerHTML: _vm._s(answer.body_html) }
+                      })
+                    ])
+                  }),
+                  0
+                )
+              : _c("div", [
+                  _vm._v(
+                    "\r\n            There is no answers to show\r\n          "
                   )
                 ])
           ])
@@ -42082,6 +42137,7 @@ var render = function() {
                           "a",
                           {
                             staticClass: "btn btn-sm btn-outline-info",
+                            attrs: { id: "questionEditButton" },
                             on: {
                               click: function($event) {
                                 $event.preventDefault()

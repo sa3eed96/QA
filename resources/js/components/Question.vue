@@ -74,7 +74,7 @@
                             <img v-for="(img,index) in images" v-bind:key="index" :src="img.image" class="img-fluid mb-4">
                         </div>
                         <div class="ml-auto">
-                            <a v-if="authorize('modify', question)" @click.prevent="edit()" class="btn btn-sm btn-outline-info">Edit</a>
+                            <a id="questionEditButton" v-if="authorize('modify', question)" @click.prevent="edit()" class="btn btn-sm btn-outline-info">Edit</a>
                             <button v-if="authorize('modify', question)" @click="destroy" class="btn btn-outline-danger btn-sm">Delete</button>
                         </div>
                         <div class="float-right">
@@ -197,6 +197,10 @@ export default {
 }
 
 .tag-edit{
+    cursor: pointer;
+}
+
+#questionEditButton{
     cursor: pointer;
 }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -22,9 +23,14 @@ class UserController extends Controller
     public function show(User $user)
     {
         $questions = $user->questions()->get();
+        $answers = $user->answers()
+            ->join('questions','questions.id','=','answers.question_id')
+            ->select('answers.*','questions.title as question_title','questions.slug as question_slug')
+            ->get();
         return view('profile',[
             'user' => $user,
-            'questions' => $questions
+            'questions' => $questions,
+            'answers' => $answers
         ]);
     }
 

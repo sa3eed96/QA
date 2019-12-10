@@ -51,7 +51,7 @@
       </div>
     </div>
     <div class="col-sm-12 col-md-6">
-      <div class="card">
+      <div class="card mb-4">
         <div class="card-header">{{user.name}}'s Questions</div>
         <div class="card-body">
           <div v-if="questions.length > 0">
@@ -85,6 +85,22 @@
           </div>
         </div>
       </div>
+      <div class="card">
+        <div class="card-header">{{user.name}}'s Answers</div>
+        <div class="card-body">
+          <div v-if="answers.length > 0">
+            <div class="post" v-for="answer in answers" v-bind:key="answer.id">
+              <h3 class="mt-0">
+                    <a :href="getQuestionUrl(answer.question_slug)">{{ answer.question_title }}</a>
+              </h3>
+              <div v-html="answer.body_html"></div>
+            </div>
+          </div>
+          <div v-else>
+            There is no answers to show
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -92,7 +108,7 @@
 
 <script>
 export default {
-  props: ["user",'questions'],
+  props: ["user", 'questions', 'answers'],
   data(){
     return {
       editing: false,
@@ -138,9 +154,10 @@ export default {
       this.editing = false;
     },
     deleteAccount(){
-      axios.delete(`/user/${this.user.id}`).then(res=>{
-        window.location.href = "/";
-      });
+      if(confirm('Are you sure you want to delete your account?'))
+        axios.delete(`/user/${this.user.id}`).then(res=>{
+          window.location.href = "/";
+        });
     }
   },
 };
