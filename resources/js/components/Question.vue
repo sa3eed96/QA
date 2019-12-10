@@ -1,86 +1,84 @@
 <template>
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            <div class="card">
-                <form v-if="editing" class="card-body" @submit.prevent="update">
-                    <div class="card-title">
-                        <input type="text" class="form-control form-control-lg" v-model="title">
-                    </div>
-                    <hr>
+    <div class="col-sm-12 col-md-10 justify-content-center">
+        <div class="card">
+            <form v-if="editing" class="card-body" @submit.prevent="update">
+                <div class="card-title">
+                    <input type="text" class="form-control form-control-lg" v-model="title">
+                </div>
+                <hr>
 
-                    <div class="media">
-                        <div class="media-body">
-                            <div class="form-row mb-1">
-                                <div class="col">
-                                    <input type="text" v-model="tagsInput" class="form-control" placeholder="add tag">
-                                </div>
-                                <div class="col">
-                                    <button class="btn btn-outline-success" type="button" @click="addTags">add</button>
-                                </div>
+                <div class="media">
+                    <div class="media-body">
+                        <div class="form-row mb-1">
+                            <div class="col">
+                                <input type="text" v-model="tagsInput" class="form-control" placeholder="add tag">
                             </div>
-                            <div class="d-block mb-2" v-if="this.tags.length > 0 || this.newTags.length > 0">
-                                Click to Remove
+                            <div class="col">
+                                <button class="btn btn-outline-success" type="button" @click="addTags">add</button>
                             </div>
-                            <div class="d-flex mb-4">
-                                <div class="d-block">
-                                    <div class="tag-edit mb-1 ml-1 rounded p-1 bg-info" v-for="(tag, index) in this.tags" v-bind:key="tag.id" @click="removeTag(index,tag)" title="remove">
-                                        {{tag.tag}}
-                                    </div>
-                                    <div class="tag-edit mb-1 ml-1 rounded p-1 bg-warning" v-for="(tag, index) in this.newTags" v-bind:key="index" @click="removeNewTag(index)" title="remove">
-                                        {{tag}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <textarea v-model="body" class="form-control" rows="10" required></textarea>
-                            </div>
-                            <div class="thumbnails">
-                                <p v-if="images.length > 0"> Click an Image to Remove</p>
-                                <img v-for="(img,index) in images" v-bind:key="index" :src="img.image" @click="removeImage(index,img)" class="img-edit rounded float-left img-thumbnail mr-1" title="Remove">
-                            </div>
+                        </div>
+                        <div class="d-block mb-2" v-if="this.tags.length > 0 || this.newTags.length > 0">
+                            Click to Remove
+                        </div>
+                        <div class="d-flex mb-4">
                             <div class="d-block">
-                                <br>
-                                <br>
-                                <br>
-                            </div>
-                            <button class="btn btn-primary" type="submit">Update</button>
-                            <button class="btn btn-outline-secondary" type="button" @click="cancelEdit()">Cancel</button>
-                        </div>
-                    </div>
-                </form>
-                <div v-else class="card-body">
-                    <div class="card-title">
-                        <div class="d-flex align-items-center">
-                            <h1> {{ title }} </h1>
-                            <div class="ml-auto">
-                                <a class="btn btn-outline-secondary" href="/question">Back</a>
-                            </div>
-                        </div>
-                        <div class="d-flex">
-                                <div class="ml-1 rounded p-1 bg-info" v-for="tag in this.tags" v-bind:key="tag.id">
+                                <div class="tag-edit mb-1 ml-1 rounded p-1 bg-info" v-for="(tag, index) in this.tags" v-bind:key="tag.id" @click="removeTag(index,tag)" title="remove">
                                     {{tag.tag}}
                                 </div>
+                                <div class="tag-edit mb-1 ml-1 rounded p-1 bg-warning" v-for="(tag, index) in this.newTags" v-bind:key="index" @click="removeNewTag(index)" title="remove">
+                                    {{tag}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <textarea v-model="body" class="form-control" rows="10" required></textarea>
+                        </div>
+                        <div class="thumbnails">
+                            <p v-if="images.length > 0"> Click an Image to Remove</p>
+                            <img v-for="(img,index) in images" v-bind:key="index" :src="img.image" @click="removeImage(index,img)" class="img-edit rounded float-left img-thumbnail mr-1" title="Remove">
+                        </div>
+                        <div class="d-block">
+                            <br>
+                            <br>
+                            <br>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Update</button>
+                        <button class="btn btn-outline-secondary" type="button" @click="cancelEdit()">Cancel</button>
+                    </div>
+                </div>
+            </form>
+            <div v-else class="card-body">
+                <div class="card-title">
+                    <div class="d-flex align-items-center">
+                        <h1> {{ title }} </h1>
+                        <div class="ml-auto">
+                            <a class="btn btn-outline-secondary" href="/question">Back</a>
                         </div>
                     </div>
-                    <hr>
+                    <div class="d-flex">
+                            <div class="ml-1 rounded p-1 bg-info" v-for="tag in this.tags" v-bind:key="tag.id">
+                                {{tag.tag}}
+                            </div>
+                    </div>
+                </div>
+                <hr>
 
-                    <div class="media">
-                        <div class="d-felx flex-column vote-controls">
-                            <vote :model="question" name="questions"></vote>
-                            <favourite :question="question"></favourite>
+                <div class="media">
+                    <div class="d-felx flex-column vote-controls">
+                        <vote :model="question" name="questions"></vote>
+                        <favourite :question="question"></favourite>
+                    </div>
+                    <div class="media-body">
+                        <div v-html="bodyHtml"></div>
+                        <div class="text-center mb-4">
+                            <img v-for="(img,index) in images" v-bind:key="index" :src="img.image" class="img-fluid mb-4">
                         </div>
-                        <div class="media-body">
-                            <div v-html="bodyHtml"></div>
-                            <div class="text-center mb-4">
-                                <img v-for="(img,index) in images" v-bind:key="index" :src="img.image" class="img-fluid mb-4">
-                            </div>
-                            <div class="ml-auto">
-                                <a v-if="authorize('modify', question)" @click.prevent="edit()" class="btn btn-sm btn-outline-info">Edit</a>
-                                <button v-if="authorize('modify', question)" @click="destroy" class="btn btn-outline-danger btn-sm">Delete</button>
-                            </div>
-                            <div class="float-right">
-                                <user-info :model="question" label="Asked"></user-info>
-                            </div>
+                        <div class="ml-auto">
+                            <a v-if="authorize('modify', question)" @click.prevent="edit()" class="btn btn-sm btn-outline-info">Edit</a>
+                            <button v-if="authorize('modify', question)" @click="destroy" class="btn btn-outline-danger btn-sm">Delete</button>
+                        </div>
+                        <div class="float-right">
+                            <user-info :model="question" label="Asked"></user-info>
                         </div>
                     </div>
                 </div>

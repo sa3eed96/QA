@@ -85,7 +85,12 @@
                 </div>
             </nav>
             <main class="py-4">
-                @yield('content')
+                <div class="container-fluid">
+                    <div class="row">
+                        @include('layouts._sidebar')
+                        @yield('content')
+                    </div>
+                </div>
             </main>
         </div>
         <script src="{{ asset('js/app.js') }}"></script>

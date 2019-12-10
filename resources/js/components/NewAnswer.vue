@@ -1,23 +1,21 @@
 <template>
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-title">
-                        <h3>Add Answer</h3>
-                    </div>
-                    <hr>
-                    <form @submit.prevent="createAnswer">
-                        <div class="form-group">
-                            <textarea class="form-control" name="body" rows="7" v-model="body" required></textarea>
-                        </div>
-                        <upload-image @imagesAdded="addImages"></upload-image>
-                        <br>
-                        <div class="form-group">
-                            <button type="submit" :disabled="isInvalid" class="btn btn-lg btn-outline-primary">Submit</button>
-                        </div>
-                    </form>
+    <div class="mt-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    <h3>Add Answer</h3>
                 </div>
+                <hr>
+                <form @submit.prevent="createAnswer">
+                    <div class="form-group">
+                        <textarea class="form-control" name="body" rows="7" v-model="body" required></textarea>
+                    </div>
+                    <upload-image @imagesAdded="addImages"></upload-image>
+                    <br>
+                    <div class="form-group">
+                        <button type="submit" :disabled="isInvalid" class="btn btn-lg btn-outline-primary">Submit</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

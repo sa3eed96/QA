@@ -11186,3 +11186,25 @@ a.text-dark:focus {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+#sidebar {
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: whitesmoke;
+  overflow-x: hidden;
+}
+
+#sidebar a {
+  padding: 6px 8px 16px 16px;
+  text-decoration: none;
+  font-size: medium;
+  color: gray;
+  display: block;
+  border-radius: 15px;
+}
+
+#sidebar a:hover {
+  color: black;
+  background-color: lightgray;
+}
+

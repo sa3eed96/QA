@@ -1,32 +1,28 @@
 <template>
-    <div>
+    <div class="col-sm-12 col-md-10 offset-md-2 ">
         <h2 class="mt-2">{{ title }}</h2>
-        <div class="row mt-4" v-if="userAnswers.length > 0">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h2>Your Answers</h2>
-                        </div>
-                        <hr>
-                        <answer @deleted="removeUserAnswer(index)" v-for="(answer, index) in userAnswers" :answer="answer" :key="answer.id"></answer>
+        <div class="mt-4" v-if="userAnswers.length > 0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">
+                        <h2>Your Answers</h2>
                     </div>
+                    <hr>
+                    <answer @deleted="removeUserAnswer(index)" v-for="(answer, index) in userAnswers" :answer="answer" :key="answer.id"></answer>
                 </div>
             </div>
         </div>
 
-        <div class="row mt-4" v-if="answers.length > 0">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h2>Answers</h2>
-                        </div>
-                        <hr>
-                        <answer @deleted="remove(index)" v-for="(answer, index) in answers" :answer="answer" :key="answer.id"></answer>
-                        <div v-if="nextUrl" class="text-center mt-3">
-                            <button @click.prevent="fetch(nextUrl)" class="btn btn-outline-secondary">Load more answers</button>
-                        </div>
+        <div class="mt-4" v-if="answers.length > 0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">
+                        <h2>Answers</h2>
+                    </div>
+                    <hr>
+                    <answer @deleted="remove(index)" v-for="(answer, index) in answers" :answer="answer" :key="answer.id"></answer>
+                    <div v-if="nextUrl" class="text-center mt-3">
+                        <button @click.prevent="fetch(nextUrl)" class="btn btn-outline-secondary">Load more answers</button>
                     </div>
                 </div>
             </div>
