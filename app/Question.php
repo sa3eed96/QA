@@ -76,11 +76,12 @@ class Question extends Model
         return $this->morphMany('App\Image', 'imagable');
     }
 
-    public function getExcerptAttribute(){
-        return str_limit(strip_tags($this->bodyhtml()), 250);
-    }
-
+    
     private function bodyHtml(){
         return \Parsedown::instance()->text($this->body);
+    }
+    
+    public function getExcerptAttribute(){
+        return str_limit(strip_tags($this->bodyhtml()), 250);
     }
 }

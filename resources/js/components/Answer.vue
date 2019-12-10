@@ -17,7 +17,11 @@
                 <button class="btn btn-outline-secondary" type="button" @click="cancelEdit()">Cancel</button>
             </form>
             <div v-else>
-                <div v-html="bodyHtml"></div>
+                <div v-if="!answer.is_to_long || fullAnswer" v-html="bodyHtml"></div>
+                <div v-else>
+                    <div v-html="answer.excerpt"></div>
+                    <i><a href="#" @click.prevent="fullAnswer=true">read more</a></i>
+                </div>
                 <div class="text-center mb-4">
                     <img v-for="(img,index) in images" v-bind:key="index" :src="img.image" class="img-fluid mb-4">
                 </div>
@@ -51,7 +55,8 @@ export default {
             id: this.answer.id,
             questionId: this.answer.question_id,
             images: [],
-            removedImages: []
+            removedImages: [],
+            fullAnswer: false
         };
     },
     created(){

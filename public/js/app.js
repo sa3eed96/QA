@@ -1949,6 +1949,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['answer'],
   data: function data() {
@@ -1959,7 +1963,8 @@ __webpack_require__.r(__webpack_exports__);
       id: this.answer.id,
       questionId: this.answer.question_id,
       images: [],
-      removedImages: []
+      removedImages: [],
+      fullAnswer: false
     };
   },
   created: function created() {
@@ -2541,6 +2546,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
 //
 //
 //
@@ -40829,7 +40837,29 @@ var render = function() {
             ]
           )
         : _c("div", [
-            _c("div", { domProps: { innerHTML: _vm._s(_vm.bodyHtml) } }),
+            !_vm.answer.is_to_long || _vm.fullAnswer
+              ? _c("div", { domProps: { innerHTML: _vm._s(_vm.bodyHtml) } })
+              : _c("div", [
+                  _c("div", {
+                    domProps: { innerHTML: _vm._s(_vm.answer.excerpt) }
+                  }),
+                  _vm._v(" "),
+                  _c("i", [
+                    _c(
+                      "a",
+                      {
+                        attrs: { href: "#" },
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            _vm.fullAnswer = true
+                          }
+                        }
+                      },
+                      [_vm._v("read more")]
+                    )
+                  ])
+                ]),
             _vm._v(" "),
             _c(
               "div",
@@ -41899,7 +41929,7 @@ var render = function() {
                           {
                             staticClass: "ml-1 btn btn-secondary btn-sm",
                             class:
-                              _vm.questions.last_page_url !==
+                              _vm.questions.current_page !==
                               _vm.questions.last_page
                                 ? ""
                                 : "disabled",
@@ -41954,8 +41984,14 @@ var render = function() {
                             )
                           ]),
                           _vm._v(" "),
+                          _c("p", { staticClass: "lead" }, [
+                            _c("small", { staticClass: "text-muted" }, [
+                              _vm._v(_vm._s(answer.created_date))
+                            ])
+                          ]),
+                          _vm._v(" "),
                           _c("div", {
-                            domProps: { innerHTML: _vm._s(answer.body_html) }
+                            domProps: { innerHTML: _vm._s(answer.excerpt) }
                           })
                         ]
                       )
@@ -42042,8 +42078,7 @@ var render = function() {
                           {
                             staticClass: "ml-1 btn btn-secondary btn-sm",
                             class:
-                              _vm.answers.last_page_url !==
-                              _vm.answers.last_page
+                              _vm.answers.current_page !== _vm.answers.last_page
                                 ? ""
                                 : "disabled",
                             on: {
