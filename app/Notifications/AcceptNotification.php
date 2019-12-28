@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 
 class AcceptNotification extends Notification implements ShouldQueue
 {
@@ -31,7 +32,7 @@ class AcceptNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['database'];
+        return ['broadcast', 'database'];
     }
 
     /**
@@ -46,5 +47,13 @@ class AcceptNotification extends Notification implements ShouldQueue
             'body' => 'Your Answer Was Accepted',
             'question_slug' => $this->question->slug
         ];
+    }
+
+    public function toBroadcast($notifiable)
+    {
+        return new BroadcastMessage([
+            'body' => 'Your Answer Was Accepted',
+            'question_slug' => $this->question->slug,
+        ]);
     }
 }

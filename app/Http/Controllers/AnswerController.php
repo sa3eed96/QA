@@ -7,6 +7,7 @@ use App\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use App\Image;
 use App\Events\ReplyEvent;
 use App\Http\Requests\AnswerRequest;
@@ -41,6 +42,7 @@ class AnswerController extends Controller
                 $answer->images()->saveMany($images);
             }
             $question->user()->get()[0]->notify(new ReplyNotification($question));
+            // Notification::send($question->user()->get()[0], new ReplyNotification($question));
             return $answer;
         });
         return response()->json([

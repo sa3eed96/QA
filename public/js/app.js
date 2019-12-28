@@ -2481,7 +2481,7 @@ __webpack_require__.r(__webpack_exports__);
         if (data.notifications.data.length < 3) _this.noMore = true;
       } else _this.noMore = true;
     });
-    Echo["private"]("App.User.".concat(window.Auth.user.id)).notification(function (notification) {
+    Echo["private"]('App.User.' + window.Auth.user.id).notification(function (notification) {
       console.log(notification);
 
       _this.notifications.unshift({

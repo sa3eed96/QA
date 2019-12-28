@@ -53,9 +53,8 @@ export default {
             this.noMore = true;
         });
         
-        Echo.private(`App.User.${window.Auth.user.id}`)
-            .notification(notification=>{
-                console.log(notification);
+        Echo.private('App.User.'+window.Auth.user.id)
+            .notification((notification)=>{
                 this.notifications.unshift({
                     'data':{
                         'body': notification.body,

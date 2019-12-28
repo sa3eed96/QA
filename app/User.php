@@ -19,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','country', 'age'
+        'name', 'email', 'password','country', 'age', 'reputation'
     ];
 
     protected $appends = ['url', 'avatar'];
@@ -83,27 +83,8 @@ class User extends Authenticatable
         return $this->_vote($voteAnswers, $answer, $vote);
     }
 
-    private function _vote($relationship, $model, $vote){
-        if($relationship->where('votable_id',$model->id)->exists()){
-            $relationship->updateExistingPivot($model, ['vote' => $vote]);
-        }
-        else{
-            $relationship->attach($model, [ 'vote' => $vote ]);
-        }
 
-        $model = DB::transaction(function() use ($model, $vote){            
-            $this->updateVoteReputation($model, $vote);
-            $model->load('votes');
-            $upVotes = (int) $model->votes()->wherePivot('vote', 1)->sum('vote');
-            $downVotes = (int) $model->votes()->wherePivot('vote', -1)->sum('vote');
-            $model->votes_count = $upVotes + $downVotes;
-            $model->save();
-            return $model;
-        });
-        return $model-> votes_count;
-    }
-
-    private function updateVoteReputation($model, $vote){
+    public function updateVoteReputation($model, $vote){
         $user = $model->user()->get()[0];
         $currentUser = Auth::user();
         if(Auth::user() && $user['id'] !== $currentUser->id){
@@ -120,9 +101,29 @@ class User extends Authenticatable
                 $currentUserReputation -= 2;
             else if($vote === -1)
                 $currentUserReputation = 1;
-
-            $user->update(['reputation' => $reputation]);
-            $currentUser->update(['reputation' => $currentUserReputation]);
+            $model = DB::transaction(function(){
+                $user->update(['reputation' => $reputation]);
+                $currentUser->update(['reputation' => $currentUserReputation]);
+                $model->load('votes');
+                $upVotes = (int) $model->votes()->wherePivot('vote', 1)->sum('vote');
+                $downVotes = (int) $model->votes()->wherePivot('vote', -1)->sum('vote');
+                $model->votes_count = $upVotes + $downVotes;
+                $model->save();
+                return $model;
+            });
+            return $model;
         }
+    }
+
+    private function _vote($relationship, $model, $vote){
+        if($relationship->where('votable_id',$model->id)->exists()){
+            $relationship->updateExistingPivot($model, ['vote' => $vote]);
+        }
+        else{
+            $relationship->attach($model, [ 'vote' => $vote ]);
+        }
+        $model = $this->updateVoteReputation($model, $vote);
+
+        return $model-> votes_count;
     }
 }
