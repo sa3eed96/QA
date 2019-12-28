@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 
-use App\Notification;
-
 class User extends Authenticatable
 {
     use Notifiable;
@@ -43,10 +41,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    public function notifications(){
-        return $this->hasMany(Notification::class);
-    }
 
     public function questions(){
         return $this->hasMany(Question::class);
@@ -97,13 +91,14 @@ class User extends Authenticatable
             $relationship->attach($model, [ 'vote' => $vote ]);
         }
 
-        DB::transaction(function() use ($model, $vote){            
+        $model = DB::transaction(function() use ($model, $vote){            
             $this->updateVoteReputation($model, $vote);
             $model->load('votes');
             $upVotes = (int) $model->votes()->wherePivot('vote', 1)->sum('vote');
             $downVotes = (int) $model->votes()->wherePivot('vote', -1)->sum('vote');
             $model->votes_count = $upVotes + $downVotes;
             $model->save();
+            return $model;
         });
         return $model-> votes_count;
     }

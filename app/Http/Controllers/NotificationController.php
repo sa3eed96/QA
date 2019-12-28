@@ -3,24 +3,35 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Notification;
-
+use App\User;
 
 class NotificationController extends Controller
 {
-    public function index(Request $request){
-        $notifications = Notification::where('user_id', $request->query('user_id'))->latest()->simplePaginate(5);
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(User $user)
+    {
         return response()->json([
-            'notifications' => $notifications
+            'notifications' => $user->notifications()->simplePaginate(3)
         ]);
     }
 
-    public function update(Request $request){
-        Notification::where('user_id', $request->user_id)->where('read',false)->update([
-            'read' => true
-        ]);
-        return response()->json([
-            'message' => 'updated successfully'
+    
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, User $user)
+    {
+        $user->unreadNotifications()->update([
+            'read_at' => now()
         ]);
     }
+
 }

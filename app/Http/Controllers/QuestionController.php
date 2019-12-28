@@ -63,7 +63,7 @@ class QuestionController extends Controller
      */
     public function store(AskQuestionRequest $request)
     {
-        DB::transaction(function() use($request){
+        $question = DB::transaction(function() use($request){
             $question = $request->user()->questions()->create([
                 'title'=> $request->input('title'),
                 'body' => htmlspecialchars($request->input('body'))
@@ -81,10 +81,11 @@ class QuestionController extends Controller
                 }
                 $question->images()->saveMany($images);
             }
-            return response()->json([
-                'slug' =>  $question->slug
-            ]);
+            return $question;
         });
+        return response()->json([
+            'slug' =>  $question->slug
+        ]);
     }
 
     /**
@@ -120,7 +121,7 @@ class QuestionController extends Controller
     public function update(AskQuestionRequest $request, Question $question)
     {
         $this->authorize('update', $question);
-        DB::transaction(function() use($request, $question){
+        $question = DB::transaction(function() use($request, $question){
             $question->update($request->only('title', 'body'));
             if($request->removedTags)
                 $question->tags()->wherein('id',$request->removedTags)->delete();
@@ -132,6 +133,7 @@ class QuestionController extends Controller
                 array_push($tags, new Tag(['tag' => $tag]));
                 $question->tags()->saveMany($tags);
             }
+            return $question;
         });
         return response()->json([
             'message' => 'Question Edited',

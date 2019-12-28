@@ -1,7 +1,7 @@
 <template>
     <div>
         <a class="nav-link dropdown-toggle d-flex" @blur="view" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <div v-if="notifications.length > 0 && !notifications[0].read" class="mr-1">
+            <div v-if="notifications.length > 0 && !notifications[0].read_at" class="mr-1">
                 <i id="notice" class="fas fa-exclamation-circle fa-sm"></i>
             </div>
             <div>
@@ -9,20 +9,20 @@
             </div>
         </a>
         <div @scroll="scroll()" class="dropdown-menu" id="menu" aria-labelledby="navbarDropdownMenuLink">
-          <a v-for="(notification, index) in notifications" v-bind:key="index" class="list dropdown-item border-bottom border-secondary" :href="getUrl(notification.question_slug)">
+          <a v-for="(notification, index) in notifications" v-bind:key="index" class="list dropdown-item border-bottom border-secondary" :href="getUrl(notification.data.question_slug)">
               <div class="d-flex">
-                <div v-if="!notification.read" class="mr-1">
+                <div v-if="!notification.read_at" class="mr-1">
                     <i id="circle" class="fas fa-circle fa-xs"></i>
                 </div>
                 <div class="mr-1">
-                    {{ notification.body }}
+                    {{ notification.data.body }}
                 </div>
                 <div class="ml-auto">
                     <span>{{ notification.created_at | moment("ddd, hA") }}</span>
                 </div>
               </div>
               <div class="d-inline-block text-truncate font-weight-bold" style="max-width: 150px;">
-                  {{notification.question_slug}}
+                  {{notification.data.question_slug}}
               </div>
           </a>
           <div v-if="noMore" class="list text-center">
@@ -42,44 +42,40 @@ export default {
         }
     },
     mounted(){
-        axios.get(`/notifications?user_id=${window.Auth.user.id}`).then(({data})=>{
+        axios.get(`/user/${window.Auth.user.id}/notifications`).then(({data})=>{
            if(data.notifications.data.length > 0){
                 this.notifications = data.notifications.data;
                 this.nextUrl = data.notifications.next_page_url;
+                if(data.notifications.data.length < 3)
+                    this.noMore = true;
            }
            else
             this.noMore = true;
         });
         
-        // Echo.private(`acceptChannel.${window.Auth.user.id}`)
-        //     .listen('AcceptEvent', (e)=>{
-        //         this.notifications.unshift({
-        //             'body': 'Your answer was accepted',
-        //             'read': false,
-        //             'created_at': new Date().toISOString(),
-        //             'question_slug': e.slug
-        //         });
-        //     });
-        // Echo.private(`replyChannel.${window.Auth.user.id}`)
-        //     .listen('ReplyEvent',(e) =>{
-        //         this.notifications.unshift({
-        //             'body': 'Someone replied to your question',
-        //             'read': false,
-        //             'created_at': new Date().toISOString(),
-        //             'question_slug': e.question.slug
-        //         });            
-        //     });
+        Echo.private(`App.User.${window.Auth.user.id}`)
+            .notification(notification=>{
+                console.log(notification);
+                this.notifications.unshift({
+                    'data':{
+                        'body': notification.body,
+                        'question_slug': notification.question_slug
+                    },
+                    'read_at': null,
+                    'created_at': new Date().toISOString()
+                });
+             });
     },
     methods: {
         getUrl(slug){
             return `/question/${slug}`;
         },
         view(){
-            if(this.notifications.length > 0 && !this.notifications[0].read){
-                axios.patch('/notifications',{user_id: window.Auth.user.id});
+            if(this.notifications.length > 0 && !this.notifications[0].read_at){
+                axios.patch(`/user/${window.Auth.user.id}/notifications`);
                 let i=0;
-                while(i < this.notifications.length && !this.notifications[i].read){
-                    this.notifications[i].read = true;
+                while(i < this.notifications.length && !this.notifications[i].read_at){
+                    this.notifications[i].read_at = true;
                     i++;
                 }
             }
@@ -87,7 +83,7 @@ export default {
         scroll(){
             if(this.nextUrl){
                 if(this.notifications.length*75-document.getElementById('menu').scrollTop < 200){
-                    axios.get(`${this.nextUrl}&user_id=${window.Auth.user.id}`).then(({data})=>{
+                    axios.get(`${this.nextUrl}`).then(({data})=>{
                         data.notifications.data.forEach(not => {
                             this.notifications.push(not);
                         });

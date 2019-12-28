@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Image;
 use App\Events\ReplyEvent;
 use App\Http\Requests\AnswerRequest;
+use App\Notifications\ReplyNotification;
 
 class AnswerController extends Controller
 {
@@ -30,7 +31,7 @@ class AnswerController extends Controller
      */
     public function store(Question $question, AnswerRequest $request)
     {
-        DB::transaction(function() use($request, $question){
+        $answer = DB::transaction(function() use($request, $question){
             $answer = $question->answers()->create(['body' => htmlspecialchars($request->input('body')), 'user_id' => Auth::id()]);
             if($request->file('images')){
                 $images = [];
@@ -39,8 +40,9 @@ class AnswerController extends Controller
                 }
                 $answer->images()->saveMany($images);
             }
+            $question->user()->get()[0]->notify(new ReplyNotification($question));
+            return $answer;
         });
-        broadcast(new ReplyEvent($question));
         return response()->json([
             'message' => 'Answer Created',
             'answer' => $answer->load('user')
@@ -71,10 +73,11 @@ class AnswerController extends Controller
     public function update(AnswerRequest $request, Question $question, Answer $answer)
     {
         $this->authorize('update', $answer);
-        DB::transaction(function() use($request, $answer){
+        $answer = DB::transaction(function() use($request, $answer){
             $answer->update(['body' => $request->body]);
             if($request->removedImages)
                 $answer->images()->wherein('id',$request->removedImages)->delete();
+            return $answer;
         });
         return response()->json([
             'message' => 'Your answer is updated',

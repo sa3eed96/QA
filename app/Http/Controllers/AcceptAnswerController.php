@@ -11,7 +11,7 @@ class AcceptAnswerController extends Controller
     public function __invoke(Answer $answer){
         $this->authorize('accept', $answer);
         $answer->question->acceptBestAnswer($answer);
-        broadcast(new AcceptEvent($answer));
+        $answer->user()->get()[0]->notify(new AcceptNotification($answer->question()->get()[0]));
         return response()->json([
             'message'=> 'Answer Accepted'
         ]);

@@ -31,11 +31,11 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
  import Echo from 'laravel-echo';
 
-//  window.Pusher = require('pusher-js');
+ window.Pusher = require('pusher-js');
 
-//  window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: '2e02ebc9d3258ba52991',
-//     cluster: 'eu',
-//     forceTLS: false
-// });
+ window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: '2e02ebc9d3258ba52991',
+    cluster: 'eu',
+    forceTLS: false
+});
