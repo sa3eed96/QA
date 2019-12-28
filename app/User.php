@@ -101,7 +101,7 @@ class User extends Authenticatable
                 $currentUserReputation -= 2;
             else if($vote === -1)
                 $currentUserReputation = 1;
-            $model = DB::transaction(function(){
+            $model = DB::transaction(function() use($reputation, $currentUserReputation){
                 $user->update(['reputation' => $reputation]);
                 $currentUser->update(['reputation' => $currentUserReputation]);
                 $model->load('votes');
@@ -124,6 +124,6 @@ class User extends Authenticatable
         }
         $model = $this->updateVoteReputation($model, $vote);
 
-        return $model-> votes_count;
+        return $model['votes_count'];
     }
 }
